@@ -1,0 +1,457 @@
+#include <iostream>
+#include <random>
+#include <time.h>
+#include "instancias_ruins_Quicksort.hpp"
+using namespace std;
+
+void troca(int *i, int *j)
+{
+    int aux;
+    aux = *i;
+    *i = *j;
+    *j = aux;
+}
+
+// Quicksort Índices ---------------------------------------------------------------
+
+int particionamento_indices(int *v, int inicio, int fim, int pivo)
+{
+
+    troca(&v[inicio], &v[pivo]);
+    pivo = inicio;
+
+    int i = inicio;
+
+    for (int j = i + 1; j < fim + 1; j++)
+    {
+        if (v[j] < v[pivo])
+        {
+            i++;
+            troca(&v[i], &v[j]);
+        }
+    }
+
+    troca(&v[inicio], &v[i]);
+    return i;
+}
+
+int escolher_pivo_indices(int primeiro, int ultimo)
+{
+    return (primeiro + ultimo) / 2;
+}
+
+void quick_sort_indices(int *v, int inicio, int fim)
+{
+    if (fim > inicio)
+    {
+        int pivo_escolhido = escolher_pivo_indices(inicio, fim);
+        int pivo = particionamento_indices(v, inicio, fim, pivo_escolhido);
+        quick_sort_indices(v, inicio, pivo - 1);
+        quick_sort_indices(v, pivo + 1, fim);
+    }
+}
+
+// Fim Quicksort Índices ------------------------------------------------------------
+
+int *particionamento(int *inicio, int *fim, int *pivo)
+{
+
+    troca(inicio, pivo);
+    pivo = inicio;
+
+    int *i = inicio;
+    int *j = i + 1;
+
+    for (; j != fim + 1; j++)
+    {
+        if (*j < *pivo)
+        {
+            i++;
+            troca(i, j);
+        }
+    }
+
+    troca(inicio, i);
+    return i;
+}
+
+int *escolher_pivo(int *primeiro, int *ultimo)
+{
+    int a = (ultimo - primeiro) / 2;
+    return primeiro + a;
+}
+
+// Quicksort Ponteiros ---------------------------------------------------------------
+
+void quick_sort_ponteiros(int *inicio, int *fim)
+{
+
+    if (fim > inicio)
+    {
+        int *pivo_escolhido = escolher_pivo(inicio, fim);
+        int *pivo = particionamento(inicio, fim, pivo_escolhido);
+        quick_sort_ponteiros(inicio, pivo - 1);
+        quick_sort_ponteiros(pivo + 1, fim);
+    }
+}
+
+// Fim Quicksort Ponteiros -----------------------------------------------------------
+
+// Quicksort Memoria -----------------------------------------------------------------
+
+void quick_sort_memoria(int *inicio, int *fim)
+{
+    while (fim > inicio)
+    {
+        int *pivo_escolhido = escolher_pivo(inicio, fim);
+        int *pivo = particionamento(inicio, fim, pivo_escolhido);
+        if (pivo - inicio < fim - pivo)
+        {
+            quick_sort_memoria(inicio, pivo - 1);
+            inicio = pivo + 1;
+        }
+        else
+        {
+            quick_sort_memoria(pivo + 1, fim);
+            fim = pivo - 1;
+        }
+    }
+}
+
+// Fim Quicksort Memoria -------------------------------------------------------------
+
+// Quicksort Mediana -----------------------------------------------------------------
+
+void tri_particionamento(int *inicio, int *fim, int *pivo, int **r, int **s)
+{
+    troca(inicio, pivo);
+    pivo = inicio;
+
+    int *m = inicio;
+    int *i = inicio;
+    int *j = i + 1;
+
+    for (; j != fim + 1; j++)
+    {
+        if (*j == *pivo)
+        {
+            i++;
+            troca(i, j);
+        }
+        if (*j < *pivo)
+        {
+            m++;
+            i++;
+            troca(i, j);
+            troca(i, m);
+        }
+    }
+    troca(pivo, m);
+
+    *r = m;
+    *s = i;
+}
+
+void selecao_linear_BFPRT(int *v, int *inicio, int *iesimo, int *fim)
+{
+    int k = 0;
+    if (fim == inicio)
+        return;
+    while (fim > inicio)
+    {
+        if (fim - inicio < 5)
+        {
+            quick_sort_memoria(inicio, fim);
+
+            if (fim - inicio == 1)
+            {
+                troca(inicio, v + k);
+                k++;
+                troca(fim, v + k);
+                k++;
+                break;
+            }
+            if (fim - inicio == 2)
+            {
+                troca(inicio + 1, v + k);
+                k++;
+                break;
+            }
+            if (fim - inicio == 3)
+            {
+                troca(inicio + 1, v + k);
+                k++;
+                troca(inicio + 2, v + k);
+                k++;
+                break;
+            }
+            
+            return;
+        }
+        else
+        {
+            while (fim >= inicio + 5)
+            {
+                selecao_linear_BFPRT(v, inicio, inicio + 2, inicio + 4);
+                troca(v + k, inicio + 2);
+                inicio = inicio + 5;
+                k++;
+            }
+        }
+    }
+
+    selecao_linear_BFPRT(v, v, v + k / 2, v + k);
+
+    int *M = v + k / 2;
+    int *r = NULL;
+    int *s = NULL;
+    tri_particionamento(v, fim, M, &r, &s);
+
+    if (iesimo < r)
+        selecao_linear_BFPRT(v, v, iesimo, r - 1);
+    if (iesimo > s)
+        selecao_linear_BFPRT(v, s + 1, iesimo, fim);
+}
+/*
+void quick_sort_mediana_das_medianas(int *inicio, int *fim)
+{
+}
+*/
+// Fim Quicksort Mediana -------------------------------------------------------------
+
+// Quicksort Pivo Aleatório ----------------------------------------------------------
+
+// Coisas para aleatoriedade
+
+random_device RDA;
+mt19937 ger(RDA());
+
+int *escolher_pivo_aleatorio(int *primeiro, int *ultimo)
+{
+    uniform_int_distribution<int> dis(0, ultimo - primeiro);
+    return primeiro + dis(ger);
+}
+
+void quick_sort_pivo_aleatorio(int *inicio, int *fim)
+{
+    while (fim > inicio)
+    {
+        int *pivo_escolhido = escolher_pivo_aleatorio(inicio, fim);
+        int *pivo = particionamento(inicio, fim, pivo_escolhido);
+        if (pivo - inicio < fim - pivo)
+        {
+            quick_sort_pivo_aleatorio(inicio, pivo - 1);
+            inicio = pivo + 1;
+        }
+        else
+        {
+            quick_sort_pivo_aleatorio(pivo + 1, fim);
+            fim = pivo - 1;
+        }
+    }
+}
+
+// Fim Quicksort Pivo Aleatório ------------------------------------------------------
+
+bool verifica_ordenacao(int *inicio, int *fim)
+{
+    int *p = inicio;
+    inicio++;
+    for (; inicio != fim + 1; inicio++)
+    {
+        if (*p > *inicio)
+            return false;
+        p++;
+    }
+    return true;
+}
+
+void imprimir_vetor(int *v, int n)
+{
+    for (int i = 0; i < n; ++i)
+        cout << v[i] << " ";
+    cout << endl;
+}
+
+void gerar_instancia_aleatoria(int *v, int n)
+{
+    cout << "Forneca o intervalo" << endl;
+
+    int li = 1, ls = 0;
+    while (li > ls)
+    {
+        cout << "Limite inferior: ";
+        cin >> li;
+        cout << "Limite superior: ";
+        cin >> ls;
+    }
+    cout << endl;
+
+    uniform_int_distribution<int> dis(li, ls);
+
+    for (int i = 0; i < n; ++i)
+        v[i] = dis(ger);
+}
+
+void copiar_vetor(int *v, int *copia, int n)
+{
+    for (int i = 0; i < n; i++)
+        copia[i] = v[i];
+}
+
+int main()
+{
+    cout << "TRABALHO 1 - QUICK SORT\n\n";
+
+    cout << "Forneca o numero de elementos do vetor: ";
+
+    int n = 0;
+    while (n < 1)
+        cin >> n;
+
+    int *v = new (nothrow) int[n];
+    int *copia = new (nothrow) int[n];
+
+    int opcao = 0;
+    while (opcao < 1 || opcao > 2)
+    {
+        cout << "1 - Escrever intervalo com repeticao\n";
+        cout << "2 - Instancias de pior caso\n\n";
+        cin >> opcao;
+    }
+    
+    if(opcao == 1 ){
+        gerar_instancia_aleatoria(v, n);
+    }else{
+        escrever_instancia(v, n);
+    }
+    clock_t Ticks[2];
+
+    
+
+    while (true)
+    {
+        opcao = 0;
+        while (opcao < 1 || opcao > 6)
+        {
+            //Cabeçalho
+            cout << "\n\nQual Quick Sort deseja executar?\n";
+            cout << "1 - Indices\n";
+            cout << "2 - Ponteiros\n";
+            cout << "3 - Memoria\n";
+            cout << "4 - Aleatorio\n";
+            cout << "5 - Testar todos\n";
+            cout << "6 - Sair\n\n";
+            cin >> opcao;
+        }
+
+        if (opcao > 4)
+            break;
+
+        copiar_vetor(v, copia, n);
+        switch (opcao)
+        {
+        case 1:
+            cout << "\nQuick Sort por Indices\n";
+            Ticks[0] = clock();
+            quick_sort_indices(copia, 0, n - 1);
+            break;
+        case 2:
+            cout << "\nQuick Sort por Ponteiros\n";
+            Ticks[0] = clock();
+            quick_sort_ponteiros(copia, copia + n - 1);
+            break;
+        case 3:
+            cout << "\nQuick Sort Memoria\n";
+            Ticks[0] = clock();
+            quick_sort_memoria(copia, copia + n - 1);
+            break;
+        case 4:
+            cout << "\nQuick Sort Pivo Aleatório\n";
+            Ticks[0] = clock();
+            quick_sort_pivo_aleatorio(copia, copia + n - 1);
+            break;
+        }
+
+        Ticks[1] = clock();
+        if (verifica_ordenacao(copia, copia + n - 1))
+        {
+            cout << "O vetor esta ordenado.\n";
+            cout << "Tempo " << (double)(Ticks[1] - Ticks[0]) * 1000.0 / CLOCKS_PER_SEC << " milisegundos.\n";
+        }
+        else
+            cout << "O vetor não está ordenado\n\n";
+        
+    }
+
+    if(opcao == 5){
+
+        copiar_vetor(v, copia, n);
+        cout << "\nQuick Sort por Indices\n";
+        Ticks[0] = clock();
+        quick_sort_indices(copia, 0, n - 1);
+
+        Ticks[1] = clock();
+        if (verifica_ordenacao(copia, copia + n - 1))
+        {
+            cout << "O vetor esta ordenado.\n";
+            cout << "Tempo " << (double)(Ticks[1] - Ticks[0]) * 1000.0 / CLOCKS_PER_SEC << " milisegundos.\n";
+        }
+        else
+            cout << "O vetor não está ordenado\n\n";
+
+        // -----------------------------------------------------------------------------------------------------
+        
+        copiar_vetor(v, copia, n);
+        cout << "\nQuick Sort por Ponteiros\n";
+        Ticks[0] = clock();
+        quick_sort_ponteiros(copia, copia + n - 1);
+
+        Ticks[1] = clock();
+        if (verifica_ordenacao(copia, copia + n - 1))
+        {
+            cout << "O vetor esta ordenado.\n";
+            cout << "Tempo " << (double)(Ticks[1] - Ticks[0]) * 1000.0 / CLOCKS_PER_SEC << " milisegundos.\n";
+        }
+        else
+            cout << "O vetor não está ordenado\n\n";
+        
+        // -----------------------------------------------------------------------------------------------------
+        
+        copiar_vetor(v, copia, n);
+        cout << "\nQuick Sort por Memoria\n";
+        Ticks[0] = clock();
+        quick_sort_memoria(copia, copia + n - 1);
+
+        Ticks[1] = clock();
+        if (verifica_ordenacao(copia, copia + n - 1))
+        {
+            cout << "O vetor esta ordenado.\n";
+            cout << "Tempo " << (double)(Ticks[1] - Ticks[0]) * 1000.0 / CLOCKS_PER_SEC << " milisegundos.\n";
+        }
+        else
+            cout << "O vetor não está ordenado\n\n";
+        
+        // -----------------------------------------------------------------------------------------------------
+        
+        copiar_vetor(v, copia, n);
+        cout << "\nQuick Sort por Pivo aleatorio\n";
+        Ticks[0] = clock();
+        quick_sort_pivo_aleatorio(copia, copia + n - 1);
+
+        Ticks[1] = clock();
+        if (verifica_ordenacao(copia, copia + n - 1))
+        {
+            cout << "O vetor esta ordenado.\n";
+            cout << "Tempo " << (double)(Ticks[1] - Ticks[0]) * 1000.0 / CLOCKS_PER_SEC << " milisegundos.\n";
+        }
+        else
+            cout << "O vetor não está ordenado\n\n";
+        
+    }
+
+    delete[] v;
+    delete[] copia;
+}
+
+//g++ -Wall -Wextra -std=c++17 -pedantic -o executavel_trabalho_1 trabalho_1.cpp
