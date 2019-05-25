@@ -80,27 +80,22 @@ void selecao_linear_BFPRT(int *inicio, int *iesimo, int *fim)
 	
     int k = 0;
     int *segmento = inicio;
-
+	// caso em que v[a...b] >= 5
     while(fim > segmento + 5){
 		quick_sort(segmento, segmento + 4);
-		troca(inicio + k, segmento + 2); // INICIO + 2 É ONDE ESTA A MEDIANA DO SEGMENTO ATUAL
-		segmento = segmento + 5; 	  // ESSA TROCA MANDA A MEDIANA AO INICIO DO VETOR
-		k++; 					  // ALGO ME DIZ QUE ISSO ESTA ERRADO
+		troca(inicio + k, segmento + 2); 
+		segmento = segmento + 5;
+		k++;
 	}
+	// Caso base, se v[a...b] < 5;
 	if(segmento < fim){
 		quick_sort(segmento, fim);
 		troca(inicio + k, segmento + (fim - segmento) / 2);
 		k++;
 	}
 
-	// ATÉ AQUI.. SEGMENTOS DE 5 ORDENADOS E TODAS AS MEDIANAS NO INICIO DO INTERVALOR
+	selecao_linear_BFPRT(inicio, inicio + k / 2, inicio + k - 1);    
 
-	selecao_linear_BFPRT(inicio, inicio + k / 2, inicio + k - 1);
-
-	// A IDEIA AQUI É ORDENAR O BLOCO DO DAS MEDIANAS
-	// MAS TAMBEM ACREDITO QUE ESTEJA ERRADO
-	// DAQUI PRA FRENTE NÃO FUNCIONA.
-    
 	int *Mediana = inicio;
     int *r = NULL;
     int *s = NULL;
@@ -112,11 +107,16 @@ void selecao_linear_BFPRT(int *inicio, int *iesimo, int *fim)
         selecao_linear_BFPRT(s + 1, iesimo, fim);
 	
 }
-/*
-void quick_sort_mediana_das_medianas(int *inicio, int *fim)
-{
+
+void quick_sort_med(int *inicio, int *fim){
+	if(fim > inicio){
+		selecao_linear_BFPRT(inicio, inicio + (fim - inicio) / 2, fim);
+		quick_sort_med(inicio, inicio + (fim - inicio) / 2 - 1);
+		quick_sort_med(inicio + (fim - inicio) / 2 + 1, fim);
+	}
 }
-*/
+
+
 // Fim Quicksort Mediana -------------------------------------------------------------
 
 
@@ -159,13 +159,10 @@ int main()
 		v[i] = dis(ger);
 
 
-
 	cout << "Vetor inicialmente: ";
 	imprimir_vetor(v, n);
-
-	//quick_sort(v, v + n - 1);
-
-	selecao_linear_BFPRT(v, v + n / 2, v + n - 1);
+	
+	quick_sort_med(v, v + n - 1);
 
 	cout << "Vetor apos QuickSort: ";
 	imprimir_vetor(v, n);
