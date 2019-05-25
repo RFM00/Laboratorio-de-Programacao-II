@@ -152,71 +152,50 @@ void tri_particionamento(int *inicio, int *fim, int *pivo, int **r, int **s)
     *s = i;
 }
 
-void selecao_linear_BFPRT(int *v, int *inicio, int *iesimo, int *fim)
+void selecao_linear_BFPRT(int *inicio, int *iesimo, int *fim)
 {
+	if(fim < inicio)
+		return;
+	
     int k = 0;
-    if (fim == inicio)
-        return;
-    while (fim > inicio)
-    {
-        if (fim - inicio < 5)
-        {
-            quick_sort_memoria(inicio, fim);
+    int *segmento = inicio;
+	// caso em que v[a...b] >= 5
+    while(fim > segmento + 5){
+		quick_sort_ponteiros(segmento, segmento + 4);
+		troca(inicio + k, segmento + 2); 
+		segmento = segmento + 5;
+		k++;
+	}
+	// Caso base, se v[a...b] < 5;
+	if(segmento < fim){
+		quick_sort_ponteiros(segmento, fim);
+		troca(inicio + k, segmento + (fim - segmento) / 2);
+		k++;
+	}
 
-            if (fim - inicio == 1)
-            {
-                troca(inicio, v + k);
-                k++;
-                troca(fim, v + k);
-                k++;
-                break;
-            }
-            if (fim - inicio == 2)
-            {
-                troca(inicio + 1, v + k);
-                k++;
-                break;
-            }
-            if (fim - inicio == 3)
-            {
-                troca(inicio + 1, v + k);
-                k++;
-                troca(inicio + 2, v + k);
-                k++;
-                break;
-            }
-            
-            return;
-        }
-        else
-        {
-            while (fim >= inicio + 5)
-            {
-                selecao_linear_BFPRT(v, inicio, inicio + 2, inicio + 4);
-                troca(v + k, inicio + 2);
-                inicio = inicio + 5;
-                k++;
-            }
-        }
-    }
+	selecao_linear_BFPRT(inicio, inicio + k / 2, inicio + k - 1);    
 
-    selecao_linear_BFPRT(v, v, v + k / 2, v + k);
-
-    int *M = v + k / 2;
+	int *Mediana = inicio;
     int *r = NULL;
     int *s = NULL;
-    tri_particionamento(v, fim, M, &r, &s);
-
+    tri_particionamento(inicio, fim, Mediana, &r, &s);
+	
     if (iesimo < r)
-        selecao_linear_BFPRT(v, v, iesimo, r - 1);
+        selecao_linear_BFPRT(inicio, iesimo, r - 1);
     if (iesimo > s)
-        selecao_linear_BFPRT(v, s + 1, iesimo, fim);
+        selecao_linear_BFPRT(s + 1, iesimo, fim);
+	
 }
-/*
-void quick_sort_mediana_das_medianas(int *inicio, int *fim)
-{
+
+void quick_sort_mediana(int *inicio, int *fim){
+	if(fim > inicio){
+		selecao_linear_BFPRT(inicio, inicio + (fim - inicio) / 2, fim);
+		quick_sort_mediana(inicio, inicio + (fim - inicio) / 2 - 1);
+		quick_sort_mediana(inicio + (fim - inicio) / 2 + 1, fim);
+	}
 }
-*/
+
+
 // Fim Quicksort Mediana -------------------------------------------------------------
 
 // Quicksort Pivo Aleatório ----------------------------------------------------------
@@ -309,44 +288,30 @@ int main()
     while (n < 1)
         cin >> n;
 
-    int *v = new (nothrow) int[n];
-    int *copia = new (nothrow) int[n];
+    int *v = new int[n];
+    int *copia = new int[n];
 
     int opcao = 0;
-    while (opcao < 1 || opcao > 2)
-    {
-        cout << "1 - Escrever intervalo com repeticao\n";
-        cout << "2 - Instancias de pior caso\n\n";
-        cin >> opcao;
-    }
-    
-    if(opcao == 1 ){
-        gerar_instancia_aleatoria(v, n);
-    }else{
-        escrever_instancia(v, n);
-    }
     clock_t Ticks[2];
-
     
+    while (opcao < 1 || opcao > 2){
+            cout << "1 - Escrever intervalo com repeticao\n2 - Instancias de pior caso\n\n";
+            cin >> opcao;
+        }
+        if(opcao == 1 ){
+            gerar_instancia_aleatoria(v, n);
+        }else{
+            escrever_instancia(v, n);
+        }
 
     while (true)
     {
         opcao = 0;
-        while (opcao < 1 || opcao > 6)
-        {
-            //Cabeçalho
-            cout << "\n\nQual Quick Sort deseja executar?\n";
-            cout << "1 - Indices\n";
-            cout << "2 - Ponteiros\n";
-            cout << "3 - Memoria\n";
-            cout << "4 - Aleatorio\n";
-            cout << "5 - Testar todos\n";
-            cout << "6 - Sair\n\n";
+        while (opcao < 1 || opcao > 5){
+            cout << "\nQual Quick Sort deseja executar?\n1 - Indices\n2 - Ponteiros\n";
+            cout << "3 - Memoria\n4 - Mediana\n5 - Aleatorio\n";
             cin >> opcao;
         }
-
-        if (opcao > 4)
-            break;
 
         copiar_vetor(v, copia, n);
         switch (opcao)
@@ -367,6 +332,11 @@ int main()
             quick_sort_memoria(copia, copia + n - 1);
             break;
         case 4:
+            cout << "\nQuick Sort Mediana\n";
+            Ticks[0] = clock();
+            quick_sort_mediana(copia, copia + n - 1);
+            break;
+        case 5:
             cout << "\nQuick Sort Pivo Aleatório\n";
             Ticks[0] = clock();
             quick_sort_pivo_aleatorio(copia, copia + n - 1);
@@ -381,73 +351,11 @@ int main()
         }
         else
             cout << "O vetor não está ordenado\n\n";
-        
-    }
+        cout << "\nContinuar? 1/0\n";
+        cin >> opcao;
 
-    if(opcao == 5){
-
-        copiar_vetor(v, copia, n);
-        cout << "\nQuick Sort por Indices\n";
-        Ticks[0] = clock();
-        quick_sort_indices(copia, 0, n - 1);
-
-        Ticks[1] = clock();
-        if (verifica_ordenacao(copia, copia + n - 1))
-        {
-            cout << "O vetor esta ordenado.\n";
-            cout << "Tempo " << (double)(Ticks[1] - Ticks[0]) * 1000.0 / CLOCKS_PER_SEC << " milisegundos.\n";
-        }
-        else
-            cout << "O vetor não está ordenado\n\n";
-
-        // -----------------------------------------------------------------------------------------------------
-        
-        copiar_vetor(v, copia, n);
-        cout << "\nQuick Sort por Ponteiros\n";
-        Ticks[0] = clock();
-        quick_sort_ponteiros(copia, copia + n - 1);
-
-        Ticks[1] = clock();
-        if (verifica_ordenacao(copia, copia + n - 1))
-        {
-            cout << "O vetor esta ordenado.\n";
-            cout << "Tempo " << (double)(Ticks[1] - Ticks[0]) * 1000.0 / CLOCKS_PER_SEC << " milisegundos.\n";
-        }
-        else
-            cout << "O vetor não está ordenado\n\n";
-        
-        // -----------------------------------------------------------------------------------------------------
-        
-        copiar_vetor(v, copia, n);
-        cout << "\nQuick Sort por Memoria\n";
-        Ticks[0] = clock();
-        quick_sort_memoria(copia, copia + n - 1);
-
-        Ticks[1] = clock();
-        if (verifica_ordenacao(copia, copia + n - 1))
-        {
-            cout << "O vetor esta ordenado.\n";
-            cout << "Tempo " << (double)(Ticks[1] - Ticks[0]) * 1000.0 / CLOCKS_PER_SEC << " milisegundos.\n";
-        }
-        else
-            cout << "O vetor não está ordenado\n\n";
-        
-        // -----------------------------------------------------------------------------------------------------
-        
-        copiar_vetor(v, copia, n);
-        cout << "\nQuick Sort por Pivo aleatorio\n";
-        Ticks[0] = clock();
-        quick_sort_pivo_aleatorio(copia, copia + n - 1);
-
-        Ticks[1] = clock();
-        if (verifica_ordenacao(copia, copia + n - 1))
-        {
-            cout << "O vetor esta ordenado.\n";
-            cout << "Tempo " << (double)(Ticks[1] - Ticks[0]) * 1000.0 / CLOCKS_PER_SEC << " milisegundos.\n";
-        }
-        else
-            cout << "O vetor não está ordenado\n\n";
-        
+        if(opcao == 0)
+            break;
     }
 
     delete[] v;
