@@ -1,27 +1,22 @@
 #ifndef BUSCADOR_H
 #define BUSCADOR_H
 
-int *buscar_forca_bruta(char *T, char *P, int n, int m){
-	int *ocorrencia = new int[n];
-	bool find = false;
-	for(int i = 0; i < n; i++){
-		for(int j = 0; j < m; j++){
-			if(T[i+j] != P[j]){
+void buscar_forca_bruta(char *texto, char *padrao, int *saida){
+    bool find = false;
+	for(int i = 0; texto[i] != '\0'; i++){
+        find = true;
+		for(int j = 0; padrao[j] != '\0'; j++){
+			if(texto[i+j] != padrao[j]){
 				find = false;
 				break;
-			}else{ 
-				find = true; 
 			}
 		}
-
 		if(find){ 
-			ocorrencia[i] = 1; 
-		}
-		else {
-			ocorrencia[i] = 0; 
+			*saida = i;
+            saida++;
 		}
 	}
-	return ocorrencia;
+    *saida = -1;
 }
 
 int *calcular_pi(char *P){
