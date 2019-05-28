@@ -23,6 +23,8 @@ int main(){
     char *texto, *padrao;
 
     // Teste com gerador aleatório
+	
+	srand (time(NULL)); /* initialize random seed: */
 
     cout << "\nTESTE COM GERADOR ALEATÓRIO\n";
 	

@@ -16,7 +16,6 @@ char dicionario(int i){
 
 char *gerador_aleatorio(int tam, int variedade){
 	char *vetor = new char[tam + 1];
-	srand (time(NULL)); /* initialize random seed: */
 	for (int i = 0; i < tam; i++){
 		vetor[i] = dicionario(rand() % variedade);
 	}
