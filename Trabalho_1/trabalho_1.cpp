@@ -14,7 +14,7 @@ using namespace std;
 
 int main()
 {
-    cout << "Quic Sorts\n\n";
+    cout << "\nQuick Sorts\n\n";
     cout << "Forneca o numero de elementos do vetor: ";
 
     int n;
