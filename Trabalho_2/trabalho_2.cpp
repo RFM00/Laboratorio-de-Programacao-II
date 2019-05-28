@@ -4,6 +4,7 @@
 
 #include "gerador.h"
 #include "buscador.h"
+#include "instancias_Reais_Trabalho_2.hpp"
 
 using namespace std;
 
@@ -104,6 +105,11 @@ int main(){
 	buscar_KMP(texto, padrao, saida_kmp);
 	cout << "\nKMP - Tempo Transcorrido: " << clock() - start << "ms" << endl;
     for(int i = 0; saida_kmp[i] != -1; i++) cout << *(saida_kmp + i) << ", ";
+
+
+	// Teste texto real.
+
+	start = clock();
 }
 
 //g++ -Wall -Wextra -std=c++17 -pedantic -o executavel_trabalho_2 trabalho_2.cpp
