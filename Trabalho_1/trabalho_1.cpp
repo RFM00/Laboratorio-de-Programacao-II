@@ -34,13 +34,13 @@ int main()
     else
         escrever_instancia(v, n);
     
-    imprimir_vetor(v, n);
+    // imprimir_vetor(v, n);
 
     while (true)
     {
         opcao = 0;
         cout << "\nQual Quick Sort deseja executar?\n1 - Indices\n2 - Ponteiros\n";
-        cout << "3 - Memoria\n4 - Mediana\n5 - Aleatorio\n";
+        cout << "3 - Memoria\n4 - Mediana\n5 - Aleatorio\n6 - Sair\n\n";
         cin >> opcao;
         
         copiar_vetor(v, copia, n);
@@ -67,7 +67,12 @@ int main()
             cout << "\nQuick Sort Pivo Aleatório\n";
             quick_sort_pivo_aleatorio(copia, copia + n - 1);
             break;
+        case 6:
+            break;
         }
+
+        if(opcao == 6)
+            break;
 
         Ticks[1] = clock();
         if (verifica_ordenacao(copia, copia + n - 1))
@@ -77,11 +82,6 @@ int main()
         }
         else
             cout << "O vetor não está ordenado\n\n";
-        cout << "\nContinuar? 1/0\n";
-        cin >> opcao;
-
-        if(opcao == 0)
-            break;
     }
 
     delete[] v;

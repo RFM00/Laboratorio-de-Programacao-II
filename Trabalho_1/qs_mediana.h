@@ -36,8 +36,10 @@ void tri_particionamento(int *inicio, int *fim, int *pivo, int **r, int **s)
 
 void selecao_linear_BFPRT(int *inicio, int *iesimo, int *fim)
 {
-	if(fim < inicio)
-		return;
+	if(fim < inicio + 5){
+		quick_sort_ponteiros(inicio, fim);
+        return;
+    }
 	
     int k = 0;
     int *segmento = inicio;
@@ -57,7 +59,7 @@ void selecao_linear_BFPRT(int *inicio, int *iesimo, int *fim)
 
 	selecao_linear_BFPRT(inicio, inicio + k / 2, inicio + k - 1);    
 
-	int *Mediana = inicio;
+	int *Mediana = inicio + k / 2;
     int *r = NULL;
     int *s = NULL;
     tri_particionamento(inicio, fim, Mediana, &r, &s);
