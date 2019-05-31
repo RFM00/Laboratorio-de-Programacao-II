@@ -7,7 +7,7 @@
 
 using namespace std;
 
-void buscar_forca_bruta(char *texto, char *padrao, int *saida){
+void buscar_forca_bruta(const char *texto, const char *padrao, int *saida){
     bool find = false;
 	for(int i = 0; texto[i] != '\0'; i++){
         find = true;
@@ -25,8 +25,8 @@ void buscar_forca_bruta(char *texto, char *padrao, int *saida){
     *saida = -1;
 }
 
-int *calcular_pi(char *padrao){
-    char *aux = padrao;
+int *calcular_pi(const char *padrao){
+    const char *aux = padrao;
     int m = 0;
     while (*aux != '\0')
     {
@@ -72,7 +72,7 @@ int *calcular_pi(char *padrao){
     return pi;
 }
 
-void buscar_KMP(char *texto, char *padrao, int *saida){
+void buscar_KMP(const char *texto, const char *padrao, int *saida){
     int *pi = calcular_pi(padrao);
     
     int i = 0, j = 0;

@@ -28,7 +28,7 @@ int main(){
     
     int *saida_bruta = new(nothrow) int[tamTexto + 1];
     int *saida_kmp = new(nothrow) int[tamTexto + 1];
-    char *texto = NULL, *padrao = NULL;
+    const char *texto = NULL, *padrao = NULL;
 	
 
     // Teste com gerador aleatório
@@ -48,12 +48,30 @@ int main(){
 	cout << endl;
 
 	// Força Bruta
+	clock_t start = clock();
 	buscar_forca_bruta(texto, padrao, saida_bruta);
-	// imprimirSaida(saida_bruta);
+	cout << "\nINTUITIVO - Tempo Transcorrido: " << clock() - start << "ms" << endl;
+    for(int i = 0; saida_bruta[i] != -1; i++) cout << *(saida_bruta + i) << ", ";
 
 	// KMP 
+	start = clock();
 	buscar_KMP(texto, padrao, saida_kmp);
-	// imprimirSaida(saida_kmp);
+	cout << "\nKMP - Tempo Transcorrido: " << clock() - start << "ms" << endl;
+    for(int i = 0; saida_kmp[i] != -1; i++) cout << *(saida_kmp + i) << ", ";
+	cout << endl;
+
+	// Instancia real
+
+	int *saida_real = new int[10000000];
+	start = clock();
+	buscar_forca_bruta(Texto_Livros, Padroes_Palavras[9383], saida_real);
+	cout << "\nInstancia Real Força bruta - Tempo Transcorrido: " << clock() - start << "ms" << endl;
+	imprimirSaida(saida_real);
+
+	start = clock();
+	buscar_KMP(Texto_Livros, Padroes_Palavras[2], saida_real);
+	cout << "\nInstancia Real KMP - Tempo Transcorrido: " << clock() - start << "ms" << endl;
+	imprimirSaida(saida_real);
 
 	delete[] saida_bruta;
 	delete[] saida_kmp;
