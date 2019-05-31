@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <time.h>
 
 #include "gerador.h"
 #include "buscador.h"
@@ -7,76 +8,94 @@
 
 using namespace std;
 
-void imprimirSaida(int *saida){
-	while(*saida != -1) {
-		cout << *saida << ", ";
-		saida++;
+bool benchmark(const char *texto, const char *padrao, int *saida_bruta, int *saida_kmp){
+	clock_t instanteInicial = clock();
+	
+	buscar_forca_bruta(texto, padrao, saida_bruta);
+	cout << "\nForca Bruta - Tempo Transcorrido: " << (double)(clock() - instanteInicial) / CLOCKS_PER_SEC << " segundos.";
+
+	instanteInicial = clock();
+	buscar_KMP(texto, padrao, saida_kmp);
+	cout << "\nKMP - Tempo Transcorrido: " << (double)(clock() - instanteInicial) / CLOCKS_PER_SEC << " segundos.\n";
+
+	while (*saida_bruta == *saida_kmp){
+		if(*saida_bruta == -1 && *saida_kmp == -1)
+			return true;
+		saida_bruta++;
+		saida_kmp++;
 	}
-	cout << endl;
+
+	return false;
 }
 
 int main(){
-    
-    int tamTexto = 0, tamPadrao = 0, variedade = 0;
-    
-    cout << "\nInserir tamanho do texto: ";
-    cin >> tamTexto;
-    cout << "\nInserir tamanho do padrao: ";
-    cin >> tamPadrao;
-    cout << "\nInserir grau de variedade: ";
-    cin >> variedade;
-    
-    int *saida_bruta = new(nothrow) int[tamTexto + 1];
-    int *saida_kmp = new(nothrow) int[tamTexto + 1];
-    const char *texto = NULL, *padrao = NULL;
+	srand (time(NULL));
+	int opcao = 0, padraoEscolhido, tamTexto = 0, tamPadrao = 0, variedade = 0;
+	const char *texto, *padrao;
+	int *saida_bruta, *saida_kmp;
+
+	cout << "Busca por padroes em textos!\n";
+
+	while (opcao != 3){
+		opcao = 0;
+		cout << "\nQual instancia deseja utilizar:\n1 - Instanca Aleatoria\n2 - Instancia Real\n3 - Sair\n";
+		cin >> opcao;
+
+		switch (opcao)
+		{
+		case 1:
+			cout << "\nInserir tamanho do texto: "; cin >> tamTexto;
+			if(tamTexto < 1) {cout << "Tamanho do texto deve ser maior que 1"; break;}
+			cout << "\nInserir tamanho do padrao : "; cin >> tamPadrao;
+			if(tamPadrao > tamTexto){cout << "Tamanho do Padrão deve ser menor que o tamanho do texto"; break;}
+			cout << "\nInserir grau de variedade (1 a 26): "; cin >> variedade;
+			if(variedade < 1 || variedade > 26) {cout << "Variedade deve estar no intervalo requerido"; break;}
 	
 
-    // Teste com gerador aleatório
-	
-	srand (time(NULL)); /* initialize random seed: */
+			saida_bruta = new int[tamTexto + 1];
+			saida_kmp = new int[tamTexto + 1];
 
-    cout << "\nTESTE COM GERADOR ALEATÓRIO\n";
-	
-    texto = gerador_aleatorio(tamTexto, variedade);
-    cout << "\nTexto: ";
-	for(int i = 0; i < tamTexto; i++) cout << texto[i] << " ";
-	cout << endl;
+			cout << "\nTestes com instancias aleatorias\n";
+			texto = gerador_aleatorio(tamTexto, variedade);
+			padrao = gerador_aleatorio(tamPadrao, variedade);
 
-	padrao = gerador_aleatorio(tamPadrao, variedade);
-    cout << "\nPadrao: ";
-	for(int i = 0; i < tamPadrao; i++) cout << padrao[i] << " ";
-	cout << endl;
+			if(!benchmark(texto, padrao, saida_bruta, saida_kmp))
+				cout << "Falha na ordenacao!\n";
+			
 
-	// Força Bruta
-	clock_t start = clock();
-	buscar_forca_bruta(texto, padrao, saida_bruta);
-	cout << "\nINTUITIVO - Tempo Transcorrido: " << clock() - start << "ms" << endl;
-    for(int i = 0; saida_bruta[i] != -1; i++) cout << *(saida_bruta + i) << ", ";
+			cout << "\nTestes com instancias de pior caso 1\n";
+			texto = gerador_pior_caso_1(tamTexto);
+			padrao = gerador_pior_caso_1(tamPadrao);
 
-	// KMP 
-	start = clock();
-	buscar_KMP(texto, padrao, saida_kmp);
-	cout << "\nKMP - Tempo Transcorrido: " << clock() - start << "ms" << endl;
-    for(int i = 0; saida_kmp[i] != -1; i++) cout << *(saida_kmp + i) << ", ";
-	cout << endl;
+			if(!benchmark(texto, padrao, saida_bruta, saida_kmp))
+				cout << "Falha na ordenacao!\n";
 
-	// Instancia real
 
-	int *saida_real = new int[10000000];
-	start = clock();
-	buscar_forca_bruta(Texto_Livros, Padroes_Palavras[9383], saida_real);
-	cout << "\nInstancia Real Força bruta - Tempo Transcorrido: " << clock() - start << "ms" << endl;
-	imprimirSaida(saida_real);
+			cout << "\nTestes com instancias de pior caso 2\n";
+			texto = gerador_pior_caso_2(tamTexto);
+			padrao = gerador_pior_caso_2(tamPadrao);
 
-	start = clock();
-	buscar_KMP(Texto_Livros, Padroes_Palavras[2], saida_real);
-	cout << "\nInstancia Real KMP - Tempo Transcorrido: " << clock() - start << "ms" << endl;
-	imprimirSaida(saida_real);
+			if(!benchmark(texto, padrao, saida_bruta, saida_kmp))
+				cout << "Falha na ordenacao!\n";
 
-	delete[] saida_bruta;
-	delete[] saida_kmp;
-	delete[] texto;
-	delete[] padrao;
+			delete[] texto;
+			delete[] padrao;
+			delete[] saida_bruta;
+			delete[] saida_kmp;
+			break;
+		case 2:
+			cout << "\nDigite um numero no intervalo de 0 a 35129 para selecionar a palavra: "; cin >> padraoEscolhido;
+			if(padraoEscolhido < 0 || padraoEscolhido > 35129) {cout << "O numero escolhido deve estar entre 0 e 35129"; break;}
+
+			saida_bruta = new int[10000000];
+			saida_kmp = new int[10000000];
+
+			if(!benchmark(Texto_Livros, Padroes_Palavras[padraoEscolhido], saida_bruta, saida_kmp))
+				cout << "Falha na ordenacao!\n";
+		case 3:
+			break;
+		}
+	}
 }
 
 //g++ -Wall -Wextra -std=c++17 -pedantic -o executavel_trabalho_2 trabalho_2.cpp

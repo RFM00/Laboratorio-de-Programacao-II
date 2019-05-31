@@ -1,12 +1,6 @@
 #ifndef BUSCADOR_H
 #define BUSCADOR_H
 
-#include <iostream>
-#include <string>
-#include <time.h>
-
-using namespace std;
-
 void buscar_forca_bruta(const char *texto, const char *padrao, int *saida){
     bool find = false;
 	for(int i = 0; texto[i] != '\0'; i++){
