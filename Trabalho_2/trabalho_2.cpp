@@ -1,5 +1,4 @@
 #include <iostream>
-#include <stdlib.h>
 #include <string>
 
 #include "gerador.h"
@@ -7,6 +6,14 @@
 #include "instancias_Reais_Trabalho_2.hpp"
 
 using namespace std;
+
+void imprimirSaida(int *saida){
+	while(*saida != -1) {
+		cout << *saida << ", ";
+		saida++;
+	}
+	cout << endl;
+}
 
 int main(){
     
@@ -19,9 +26,10 @@ int main(){
     cout << "\nInserir grau de variedade: ";
     cin >> variedade;
     
-    int *saida_bruta = new int[tamTexto + 1];
-    int *saida_kmp = new int[tamTexto + 1];
-    char *texto, *padrao;
+    int *saida_bruta = new(nothrow) int[tamTexto + 1];
+    int *saida_kmp = new(nothrow) int[tamTexto + 1];
+    char *texto = NULL, *padrao = NULL;
+	
 
     // Teste com gerador aleatório
 	
@@ -31,85 +39,26 @@ int main(){
 	
     texto = gerador_aleatorio(tamTexto, variedade);
     cout << "\nTexto: ";
-	for(int i = 0; i < tamTexto; i++) cout << *(texto + i) << " ";
+	for(int i = 0; i < tamTexto; i++) cout << texto[i] << " ";
 	cout << endl;
 
 	padrao = gerador_aleatorio(tamPadrao, variedade);
     cout << "\nPadrao: ";
-	for(int i = 0; i < tamPadrao; i++) cout << *(padrao + i) << " ";
+	for(int i = 0; i < tamPadrao; i++) cout << padrao[i] << " ";
 	cout << endl;
 
 	// Força Bruta
-    int start = clock();
 	buscar_forca_bruta(texto, padrao, saida_bruta);
-	cout << "\nINTUITIVO - Tempo Transcorrido: " << clock() - start << "ms" << endl;
-    for(int i = 0; saida_bruta[i] != -1; i++) cout << *(saida_bruta + i) << ", ";
+	// imprimirSaida(saida_bruta);
 
 	// KMP 
-	start = clock();
 	buscar_KMP(texto, padrao, saida_kmp);
-	cout << "\nKMP - Tempo Transcorrido: " << clock() - start << "ms" << endl;
-    for(int i = 0; saida_kmp[i] != -1; i++) cout << *(saida_kmp + i) << ", ";
+	// imprimirSaida(saida_kmp);
 
-
-
-    // Testes de pior caso 1
-    
-    cout << "\nTESTE DE PIOR CASO 1\n";
-
-    texto = gerador_pior_caso_1(tamTexto);
-    cout << "\nTexto: ";
-	for(int i = 0; i < tamTexto; i++) cout << *(texto + i) << " ";
-	cout << endl;
-
-	padrao = gerador_pior_caso_1(tamPadrao);
-    cout << "\nPadrao: ";
-	for(int i = 0; i < tamPadrao; i++) cout << *(padrao + i) << " ";
-	cout << endl;
-
-	// Força Bruta
-    start = clock();
-	buscar_forca_bruta(texto, padrao, saida_bruta);
-	cout << "\nINTUITIVO - Tempo Transcorrido: " << clock() - start << "ms" << endl;
-    for(int i = 0; saida_bruta[i] != -1; i++) cout << *(saida_bruta + i) << ", ";
-
-	// KMP
-	start = clock();
-	buscar_KMP(texto, padrao, saida_kmp);
-	cout << "\nKMP - Tempo Transcorrido: " << clock() - start << "ms" << endl;
-    for(int i = 0; saida_kmp[i] != -1; i++) cout << *(saida_kmp + i) << ", ";
-	
-
-    // Testes de pior caso 2
-    
-    cout << "\nTESTE DE PIOR CASO 2\n";
-
-    texto = gerador_pior_caso_2(tamTexto);
-    cout << "\nTexto: ";
-	for(int i = 0; i < tamTexto; i++) cout << *(texto + i) << " ";
-	cout << endl;
-
-	padrao = gerador_pior_caso_2(tamPadrao);
-    cout << "\nPadrao: ";
-	for(int i = 0; i < tamPadrao; i++) cout << *(padrao + i) << " ";
-	cout << endl;
-
-	// Força Bruta
-    start = clock();
-	buscar_forca_bruta(texto, padrao, saida_bruta);
-	cout << "\nINTUITIVO - Tempo Transcorrido: " << clock() - start << "ms" << endl;
-    for(int i = 0; saida_bruta[i] != -1; i++) cout << *(saida_bruta + i) << ", ";
-
-	// KMP
-	start = clock();
-	buscar_KMP(texto, padrao, saida_kmp);
-	cout << "\nKMP - Tempo Transcorrido: " << clock() - start << "ms" << endl;
-    for(int i = 0; saida_kmp[i] != -1; i++) cout << *(saida_kmp + i) << ", ";
-
-
-	// Teste texto real.
-
-	start = clock();
+	delete[] saida_bruta;
+	delete[] saida_kmp;
+	delete[] texto;
+	delete[] padrao;
 }
 
 //g++ -Wall -Wextra -std=c++17 -pedantic -o executavel_trabalho_2 trabalho_2.cpp

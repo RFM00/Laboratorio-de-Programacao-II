@@ -1,6 +1,12 @@
 #ifndef BUSCADOR_H
 #define BUSCADOR_H
 
+#include <iostream>
+#include <string>
+#include <time.h>
+
+using namespace std;
+
 void buscar_forca_bruta(char *texto, char *padrao, int *saida){
     bool find = false;
 	for(int i = 0; texto[i] != '\0'; i++){
@@ -19,21 +25,19 @@ void buscar_forca_bruta(char *texto, char *padrao, int *saida){
     *saida = -1;
 }
 
-int *calcular_pi(char *P){
-    char *aux = P;
+int *calcular_pi(char *padrao){
+    char *aux = padrao;
     int m = 0;
     while (*aux != '\0')
     {
         m++;
         aux++;
     }
-    delete aux;
 
     int *pi = new int[m];
     int k, l;
 
     pi[0] = 0;
-    
     for (int i = 1; i < m; i++)
     {
         k = i - 1;
@@ -42,7 +46,7 @@ int *calcular_pi(char *P){
             l = pi[k];
             if (l == 0)
             {
-                if (P[0] == P[i])
+                if (padrao[0] == padrao[i])
                 {
                     pi[i] = 1;
                     break;
@@ -53,7 +57,7 @@ int *calcular_pi(char *P){
                 }
             }else
             {
-                if (P[i] == P[l])
+                if (padrao[i] == padrao[l])
                 {
                     pi[i] = l + 1;
                     break;
@@ -61,11 +65,10 @@ int *calcular_pi(char *P){
                 {
                     k = l - 1;
                 }
-            }
-            
+            }    
         }
-        
     }
+
     return pi;
 }
 
@@ -98,8 +101,8 @@ void buscar_KMP(char *texto, char *padrao, int *saida){
                 ++j;
             }
         }
-        *saida = -1;
     }
+    *saida = -1;
 }
 
 #endif
