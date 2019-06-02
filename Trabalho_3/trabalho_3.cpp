@@ -6,7 +6,7 @@ using namespace std;
 
 struct huffman_no{
     char elem = '\0';
-    int freq;
+    int freq = 0;
     int dir = -1;
     int esq = -1;
 };
@@ -23,15 +23,19 @@ void trocar(heap_no *a, heap_no *b){
     *b = aux;
 }
 
-// i = numero de nos
-void heapfy(heap_no *heap, int m){
-    int i = m;
-    while (i >= 2 && heap[i / 2].freq > heap[i].freq){
-        trocar(&heap[1/2], &heap[i]);
-        i = i / 2;
+void heapfy(heap_no *heap, int i, int last){
+    while(i < last/2){
+        if(heap[i].freq > heap[(2*i) + 1].freq){
+            trocar(&heap[i], &heap[(2 * i) + 1]);
+        }
+        if(heap[i].freq > heap[(2*i) + 2].freq){
+            trocar(&heap[i], &heap[(2 * i) + 2]);
+        }
+        heapfy(heap, (2*i) + 1, last);
+        i = (2*i) + 2;
     }
-    
 }
+
 
 int ocorrencias(int *saida){
     int ocr = 0;
@@ -42,7 +46,7 @@ int ocorrencias(int *saida){
     return ocr;
 }
 
-int *frequencias(char *texto, int tamanho, int variedade){
+int *frequencias(const char *texto, int tamanho, int variedade){
     char *padrao = new char[2];
     padrao[1] = '\0';
 
@@ -53,7 +57,7 @@ int *frequencias(char *texto, int tamanho, int variedade){
     for(int i = 0; i < tamanho; i++) *(saida + i) = -1;
     
     for(int i = 0; i < variedade; i++){
-        padrao[0] = dicionario(i);
+        padrao[0] = v[i];
         buscar_KMP(texto, padrao, saida);
         frequencia[i] = ocorrencias(saida);
         for(int i = 0; i < tamanho; i++) *(saida + i) = -1;
@@ -62,9 +66,23 @@ int *frequencias(char *texto, int tamanho, int variedade){
     return frequencia;
 }
 
+void imprimirArvoreHuffman(huffman_no *no, int tamanho){
+    for (int i = 0; i < tamanho; i++){
+        cout << "\nElemento: " << no[i].elem;
+        cout << "\nFrequencia: " << no[i].freq;
+    }
+}
+
+void imprimirHeap(heap_no *no, int tamanho){
+    for (int i = 0; i < tamanho; i++){
+        cout << "\nIndice: " << no[i].indice;
+        cout << "\nFrequencia: " << no[i].freq;
+    }
+}
+
 int main() {
 
-    int tamanho = 10, variedade = 26;
+    int tamanho = 10, variedade = 6;
     // huffman_no *huffman_tree = new huffman_no[2*tamanho - 1];
     // heap_no *heap_min = new heap_no[tamanho];
 
@@ -76,7 +94,7 @@ int main() {
 
     // 1ª
 
-    char *texto = gerador_aleatorio(tamanho, variedade);
+    const char *texto = gerador_aleatorio(tamanho, variedade);
     int *frequencia = frequencias(texto, tamanho, variedade);
     
     cout << "Texto" << endl;
@@ -91,24 +109,39 @@ int main() {
     for (int i = 0; i < variedade; i++) 
         if (*(frequencia + i) != 0)
             num_elem++;
-    
-    huffman_no *arvore_huffman = new huffman_no[2*num_elem - 1];
+
+
+    cout << "Num Elem: " << num_elem << endl;
+
+    huffman_no *arvore_huffman = new huffman_no[2 * num_elem - 1];
     
     int j = 0;
     for (int i = 0; i < variedade; i++){
         if (frequencia[i] != 0){
-            arvore_huffman[j].elem = dicionario(i);
+            arvore_huffman[j].elem = v[i];
             arvore_huffman[j].freq = frequencia[i];
             j++;
         }
     }
 
-    heap_no *heap = new heap_no[num_elem];
+    // Perfeito, comportamento esperado.
+    imprimirArvoreHuffman(arvore_huffman, 2 * num_elem - 1);
 
+    heap_no *heap = new heap_no[num_elem];
+    j = 0;
     for (int i = 0; i < variedade; i++){
-        if (frequencia[i] != 0)
-            heap[i].freq = frequencia[i];
+        if (frequencia[i] != 0){
+            heap[j].indice = j;
+            heap[j].freq = frequencia[i];
+            j++;
+        }
     }
+
+    // Perfeito, comportamento esperado.
+    imprimirHeap(heap, num_elem);
+    heapfy(heap, num_elem, num_elem);
+    cout << "\nHeap Após heapfy\n";
+    imprimirHeap(heap, num_elem);
     
 }
 
