@@ -77,6 +77,11 @@ int main(){
 
 			if(!benchmark(texto, padrao, saida_bruta, saida_kmp))
 				cout << "Falha na ordenacao!\n";
+			
+			delete[] texto;
+			delete[] padrao;
+			delete[] saida_bruta;
+			delete[] saida_kmp;
 			break;
 		case 2:
 			cout << "\nDigite um numero no intervalo de 0 a 35129 para selecionar a palavra: "; cin >> padraoEscolhido;
@@ -87,14 +92,15 @@ int main(){
 
 			if(!benchmark(Texto_Livros, Padroes_Palavras[padraoEscolhido], saida_bruta, saida_kmp))
 				cout << "Falha na ordenacao!\n";
+
+			delete[] texto;
+			delete[] padrao;
+			delete[] saida_bruta;
+			delete[] saida_kmp;
+			break;
 		case 3:
 			break;
 		}
-
-		delete[] texto;
-		delete[] padrao;
-		delete[] saida_bruta;
-		delete[] saida_kmp;
 	}
 }
 
