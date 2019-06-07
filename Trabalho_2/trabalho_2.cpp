@@ -18,11 +18,10 @@ bool benchmark(const char *texto, const char *padrao, int *saida_bruta, int *sai
 	buscar_KMP(texto, padrao, saida_kmp);
 	cout << "\nKMP - Tempo Transcorrido: " << (double)(clock() - instanteInicial) / CLOCKS_PER_SEC << " segundos.\n";
 
-	while (*saida_bruta == *saida_kmp){
-		if(*saida_bruta == -1 && *saida_kmp == -1)
-			return true;
-		saida_bruta++;
-		saida_kmp++;
+	int i = 0;
+	while (*(bruta + i) == *(kmP + i)){
+		if(*(bruta + i) == -1 && *(kmP + i) == -1) return true;
+		++i;
 	}
 
 	return false;
