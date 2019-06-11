@@ -17,6 +17,7 @@ private:
     };
 
     Noh *raiz;
+    Noh *primeiro;
 
 public:
     class Iterador
@@ -27,29 +28,56 @@ public:
     public:
         Iterador(Noh *noh) : n(noh) {}
 
-        void operator++() { n = n->prox; }
+        void operator++() { 
+            // if (n->dir != nullptr){
+            //     n = n->dir;
+            // }else{
+            //     Noh *aux = raiz;
+            //     while (true) {
+            //         if(n->valor < raiz->valor){
+            //             if(raiz->esq == n){
+            //                 n = raiz->esq;
+            //                 break;
+            //             }else{
+            //                 raiz = raiz->esq;
+            //             }
+            //         }else{
+            //             if(raiz->dir == n){
+            //                 n = raiz->dir;
+            //                 break;
+            //             }else{
+            //                 raiz = raiz->dir;
+            //             }
+            //         }
+            //     }
+            //     raiz = aux;
+            // }
+        }
 
         TV operator*() { return n->valor; }
 
         bool operator!=(const Iterador &i) { return n != i.n; }
     };
 
-    Dicio() : raiz(nullptr) {}
+    Dicio() : raiz(nullptr), primeiro(nullptr) {}
 
-    Iterador adicionar(TC c, TV v)
+    Iterador inserir(TC c, TV v)
     {
         Noh *n = new Noh;
         n->chave = c;
         n->valor = v;
 
-        if(raiz == nullptr) // verifica se a árvore está vazia
-			raiz = n; // cria um novo nó
+        if(raiz == nullptr){
+			raiz = n;
+            primeiro = raiz;
+        }
 		else{
             Noh *aux = raiz;
-			while(raiz != nullptr){
+			while(true){
                 if(v < raiz->valor){
                     if(raiz->esq == nullptr){
                         raiz->esq = n;
+                        primeiro = n;
                         break;
                     }
                     else
@@ -83,7 +111,7 @@ public:
 
     Iterador inicio()
     {
-        Iterador i(raiz);
+        Iterador i(primeiro);
         return i;
     }
 
@@ -101,14 +129,18 @@ int main()
         Dicio<char, double> D;
 
         Dicio<char, double>::Iterador elemAdicionado = nullptr;
-        elemAdicionado = D.adicionar('a', 1.1);
-        elemAdicionado = D.adicionar('b', 2.2);
-        // D.adicionar('c', 3.3);
+        elemAdicionado = D.inserir('a', 1.1);
+        elemAdicionado = D.inserir('b', 2.2);
+        elemAdicionado = D.inserir('c', 3.3);
 
         cout << *elemAdicionado << '\n';
 
-        // Dicio<char, double>::Iterador fim = D.fim(); // ou "auto fim ..."
+        auto primeiro = D.inicio();
+        cout << "Primeiro: " << *primeiro << '\n';
 
+        // Dicio<char, double>::Iterador fim = D.fim(); // ou "auto fim ..."
+        
+        // auto fim = D.fim();
         // for (auto i = D.inicio(); i != fim; ++i)
         //     cout << *i << '\n';
     }
