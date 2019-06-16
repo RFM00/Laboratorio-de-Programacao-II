@@ -30,9 +30,9 @@ public:
         Iterador(Noh *noh) : n(noh) {}
 
         void operator++() {
-            TV valor = n->valor;
+            TC chave = n->chave;
             while (true){
-                if (n->dir != nullptr && n->dir->valor > valor){
+                if (n->dir != nullptr && n->dir->chave > chave){
                     n = n->dir;
                     while (n->esq != nullptr)
                         n = n->esq;
@@ -74,10 +74,10 @@ public:
 		else{
             Noh *nohAtual = raiz;
 			while(true){
-                if(n->valor < nohAtual->valor){
+                if(n->chave < nohAtual->chave){
                     if(nohAtual->esq == nullptr){
                         nohAtual->esq = n;
-                        if(n->valor < primeiro->valor)
+                        if(n->chave < primeiro->chave)
                             primeiro = nohAtual->esq;
                         n->pai = nohAtual;
                         break;
@@ -128,18 +128,18 @@ int main()
 {
     try
     {
-        Dicio<char, double> D;
+        Dicio<double, char> D;
 
-        Dicio<char, double>::Iterador elemAdicionado = nullptr;
-        elemAdicionado = D.inserir('a', 8);
-        elemAdicionado = D.inserir('b', 9);
-        elemAdicionado = D.inserir('c', 4);
-        elemAdicionado = D.inserir('d', 6);
-        elemAdicionado = D.inserir('a', 5);
-        elemAdicionado = D.inserir('b', 7);
-        elemAdicionado = D.inserir('a', 2);
-        elemAdicionado = D.inserir('b', 3);
-        elemAdicionado = D.inserir('b', 1);
+        Dicio<double, char>::Iterador elemAdicionado = nullptr;
+        elemAdicionado = D.inserir(8, 'k');
+        elemAdicionado = D.inserir(9, 'b');
+        elemAdicionado = D.inserir(4, 'l');
+        elemAdicionado = D.inserir(6, 'd');
+        elemAdicionado = D.inserir(5, 'a');
+        elemAdicionado = D.inserir(7, 'f');
+        elemAdicionado = D.inserir(2, 'j');
+        elemAdicionado = D.inserir(3, 'd');
+        elemAdicionado = D.inserir(1, 'e');
 
         auto inicio = D.inicio();
         auto fim = D.fim();
