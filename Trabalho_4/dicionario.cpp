@@ -102,6 +102,16 @@ public:
 
     Iterador procurar (TC c)
     {
+        while(raiz != nullptr){
+            if (raiz->chave == c){
+                Iterador i(raiz);
+                return i;
+            }
+            if (c < raiz->chave)
+                raiz = raiz->esq;
+            else
+                raiz = raiz->dir;
+        }
         Iterador i(nullptr);
         return i;
     }
@@ -132,18 +142,22 @@ int main()
 
         Dicio<double, char>::Iterador elemAdicionado = nullptr;
         elemAdicionado = D.inserir(8, 'k');
-        elemAdicionado = D.inserir(9, 'b');
-        elemAdicionado = D.inserir(4, 'l');
-        elemAdicionado = D.inserir(6, 'd');
-        elemAdicionado = D.inserir(5, 'a');
-        elemAdicionado = D.inserir(7, 'f');
-        elemAdicionado = D.inserir(2, 'j');
-        elemAdicionado = D.inserir(3, 'd');
-        elemAdicionado = D.inserir(1, 'e');
+        elemAdicionado = D.inserir(9, '9');
+        elemAdicionado = D.inserir(4, '4');
+        elemAdicionado = D.inserir(6, '6');
+        elemAdicionado = D.inserir(5, '5');
+        elemAdicionado = D.inserir(7, '7');
+        elemAdicionado = D.inserir(2, '2');
+        elemAdicionado = D.inserir(3, '3');
+        elemAdicionado = D.inserir(1, '1');
 
         auto inicio = D.inicio();
         auto fim = D.fim();
-        cout << "Primeiro: " << *inicio << '\n';
+
+        // cout << "Primeiro: " << *inicio << '\n';
+        auto elemEncontrado = D.procurar(8);
+        cout << "Elem Encontrado: " << *elemEncontrado << '\n';
+        
         // cout << "Ultimo: " << *fim << '\n';
 
         // Dicio<char, double>::Iterador fim = D.fim(); // ou "auto fim ..."
