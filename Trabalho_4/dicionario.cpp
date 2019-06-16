@@ -12,12 +12,14 @@ private:
     {
         TC chave;
         TV valor;
+        Noh *pai = nullptr;
         Noh *esq = nullptr;
         Noh *dir = nullptr;
     };
 
     Noh *raiz;
     Noh *primeiro;
+    Noh *ultimo;
 
 public:
     class Iterador
@@ -28,30 +30,39 @@ public:
     public:
         Iterador(Noh *noh) : n(noh) {}
 
-        void operator++() { 
-            // if (n->dir != nullptr){
-            //     n = n->dir;
-            // }else{
-            //     Noh *aux = raiz;
-            //     while (true) {
-            //         if(n->valor < raiz->valor){
-            //             if(raiz->esq == n){
-            //                 n = raiz->esq;
-            //                 break;
-            //             }else{
-            //                 raiz = raiz->esq;
-            //             }
-            //         }else{
-            //             if(raiz->dir == n){
-            //                 n = raiz->dir;
-            //                 break;
-            //             }else{
-            //                 raiz = raiz->dir;
-            //             }
-            //         }
-            //     }
-            //     raiz = aux;
-            // }
+        void operator++() {
+            TV valor = n->valor;
+            while (true){
+                if (n->dir != nullptr){
+                    n = n->dir;
+                        while (n->esq != nullptr)
+                            n = n->esq;
+                        break;
+                }else{
+                    
+                    while (n->valor < valor){
+
+                    }
+                }
+                
+                if(n->valor < valor){
+                    if (n->pai != nullptr){
+                        n = n->pai;
+                    }else{
+                        n = nullptr;
+                        break;
+                    }
+                }else if(n->dir == nullptr){
+
+                }
+                
+                if(n->valor < valor)
+                    continue;
+                else 
+                    else{
+                        
+                    }
+            }
         }
 
         TV operator*() { return n->valor; }
@@ -70,29 +81,34 @@ public:
         if(raiz == nullptr){
 			raiz = n;
             primeiro = raiz;
+            ultimo = raiz;
         }
 		else{
-            Noh *aux = raiz;
+            Noh *nohAtual = raiz;
 			while(true){
-                if(v < raiz->valor){
-                    if(raiz->esq == nullptr){
-                        raiz->esq = n;
-                        primeiro = n;
+                if(n->valor < nohAtual->valor){
+                    if(nohAtual->esq == nullptr){
+                        nohAtual->esq = n;
+                        if(n->valor < primeiro->valor)
+                            primeiro = nohAtual->esq;
+                        n->pai = nohAtual;
                         break;
                     }
                     else
-                        raiz = raiz->esq;
+                        nohAtual = nohAtual->esq;
                 }
                 else{
-                    if(raiz->dir == nullptr){
-                        raiz->dir = n;
+                    if(nohAtual->dir == nullptr){
+                        nohAtual->dir = n;
+                        if(n->valor > ultimo->valor)
+                            ultimo = nohAtual->dir;
+                        n->pai = nohAtual;
                         break;
                     }
                     else
-                        raiz = raiz->dir;
+                        nohAtual = nohAtual->dir;
                 }
             }
-            raiz = aux;
         }
         Iterador i(n);
         return i;
@@ -117,7 +133,7 @@ public:
 
     Iterador fim()
     {
-        Iterador i(nullptr);
+        Iterador i(ultimo);
         return i;
     }
 };
@@ -129,20 +145,28 @@ int main()
         Dicio<char, double> D;
 
         Dicio<char, double>::Iterador elemAdicionado = nullptr;
-        elemAdicionado = D.inserir('a', 1.1);
-        elemAdicionado = D.inserir('b', 2.2);
-        elemAdicionado = D.inserir('c', 3.3);
+        elemAdicionado = D.inserir('a', 2);
+        // cout << *elemAdicionado << '\n';
 
-        cout << *elemAdicionado << '\n';
+        elemAdicionado = D.inserir('b', 4);
+        // cout << *elemAdicionado << '\n';
+        
+        elemAdicionado = D.inserir('c', 1);
+        // cout << *elemAdicionado << '\n';
+        
+        elemAdicionado = D.inserir('d', 3);
+        // cout << *elemAdicionado << '\n';
 
-        auto primeiro = D.inicio();
-        cout << "Primeiro: " << *primeiro << '\n';
+        auto inicio = D.inicio();
+        auto fim = D.fim();
+        cout << "Primeiro: " << *inicio << '\n';
+        cout << "Ultimo: " << *fim << '\n';
 
         // Dicio<char, double>::Iterador fim = D.fim(); // ou "auto fim ..."
         
         // auto fim = D.fim();
-        // for (auto i = D.inicio(); i != fim; ++i)
-        //     cout << *i << '\n';
+        for (auto i = inicio; i != fim; ++i)
+            cout << *i << '\n';
     }
     catch (const exception &e)
     {
@@ -152,4 +176,4 @@ int main()
     }
 }
 
-//g++ -Wall -Wextra -std=c++17 -pedantic -o executavel_trabalho_4 trabalho_4.cpp
+//g++ -Wall -Wextra -std=c++17 -pedantic -o dic dicionario.cpp
