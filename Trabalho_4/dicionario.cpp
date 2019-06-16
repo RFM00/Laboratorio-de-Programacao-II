@@ -19,7 +19,6 @@ private:
 
     Noh *raiz;
     Noh *primeiro;
-    Noh *ultimo;
 
 public:
     class Iterador
@@ -33,35 +32,25 @@ public:
         void operator++() {
             TV valor = n->valor;
             while (true){
-                if (n->dir != nullptr){
+                if (n->dir != nullptr && n->dir->valor > valor){
                     n = n->dir;
-                        while (n->esq != nullptr)
-                            n = n->esq;
-                        break;
-                }else{
+                    while (n->esq != nullptr)
+                        n = n->esq;
+                    break;
                     
-                    while (n->valor < valor){
-
-                    }
-                }
-                
-                if(n->valor < valor){
+                }else{
                     if (n->pai != nullptr){
-                        n = n->pai;
+                        if(n->pai->esq == n){
+                            n = n->pai;
+                            break;
+                        }else{
+                            n = n->pai;
+                        }
                     }else{
                         n = nullptr;
                         break;
                     }
-                }else if(n->dir == nullptr){
-
                 }
-                
-                if(n->valor < valor)
-                    continue;
-                else 
-                    else{
-                        
-                    }
             }
         }
 
@@ -81,7 +70,6 @@ public:
         if(raiz == nullptr){
 			raiz = n;
             primeiro = raiz;
-            ultimo = raiz;
         }
 		else{
             Noh *nohAtual = raiz;
@@ -100,8 +88,6 @@ public:
                 else{
                     if(nohAtual->dir == nullptr){
                         nohAtual->dir = n;
-                        if(n->valor > ultimo->valor)
-                            ultimo = nohAtual->dir;
                         n->pai = nohAtual;
                         break;
                     }
@@ -133,7 +119,7 @@ public:
 
     Iterador fim()
     {
-        Iterador i(ultimo);
+        Iterador i(nullptr);
         return i;
     }
 };
@@ -145,22 +131,20 @@ int main()
         Dicio<char, double> D;
 
         Dicio<char, double>::Iterador elemAdicionado = nullptr;
+        elemAdicionado = D.inserir('a', 8);
+        elemAdicionado = D.inserir('b', 9);
+        elemAdicionado = D.inserir('c', 4);
+        elemAdicionado = D.inserir('d', 6);
+        elemAdicionado = D.inserir('a', 5);
+        elemAdicionado = D.inserir('b', 7);
         elemAdicionado = D.inserir('a', 2);
-        // cout << *elemAdicionado << '\n';
-
-        elemAdicionado = D.inserir('b', 4);
-        // cout << *elemAdicionado << '\n';
-        
-        elemAdicionado = D.inserir('c', 1);
-        // cout << *elemAdicionado << '\n';
-        
-        elemAdicionado = D.inserir('d', 3);
-        // cout << *elemAdicionado << '\n';
+        elemAdicionado = D.inserir('b', 3);
+        elemAdicionado = D.inserir('b', 1);
 
         auto inicio = D.inicio();
         auto fim = D.fim();
         cout << "Primeiro: " << *inicio << '\n';
-        cout << "Ultimo: " << *fim << '\n';
+        // cout << "Ultimo: " << *fim << '\n';
 
         // Dicio<char, double>::Iterador fim = D.fim(); // ou "auto fim ..."
         
