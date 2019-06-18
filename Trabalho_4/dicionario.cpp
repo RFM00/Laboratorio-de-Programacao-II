@@ -59,7 +59,15 @@ public:
         bool operator!=(const Iterador &i) { return n != i.n; }
     };
 
+    // Costrutor
     Dicio() : raiz(nullptr), primeiro(nullptr) {}
+    // Destrutor
+    ~Dicio(){
+        // for (auto i = inicio(); i != fim(); ++i){
+        //     cout << "Elemento Destruido: " << *i << '\n';
+        // }
+        cout << "Aqui vamos Destruir a arvore" << '\n';
+    };
 
     Iterador inserir(TC c, TV v)
     {
@@ -118,7 +126,9 @@ public:
 
     void remover (Iterador i)
     {
+        Noh *aux = i;
 
+        cout << *i << '\n';
     }
 
     Iterador inicio()
@@ -151,18 +161,16 @@ int main()
         elemAdicionado = D.inserir(3, '3');
         elemAdicionado = D.inserir(1, '1');
 
+        // auto elemEncontrado = D.procurar(5);
+
+        // D.remover(elemAdicionado);
+
+
+        // Dicio<char, double>::Iterador fim = D.fim(); // ou "auto fim ..."
+
         auto inicio = D.inicio();
         auto fim = D.fim();
 
-        // cout << "Primeiro: " << *inicio << '\n';
-        auto elemEncontrado = D.procurar(8);
-        cout << "Elem Encontrado: " << *elemEncontrado << '\n';
-        
-        // cout << "Ultimo: " << *fim << '\n';
-
-        // Dicio<char, double>::Iterador fim = D.fim(); // ou "auto fim ..."
-        
-        // auto fim = D.fim();
         for (auto i = inicio; i != fim; ++i)
             cout << *i << '\n';
     }
@@ -174,4 +182,4 @@ int main()
     }
 }
 
-//g++ -Wall -Wextra -std=c++17 -pedantic -o dic dicionario.cpp
+// g++ -Wall -Wextra -std=c++17 -pedantic -o dic dicionario.cpp
