@@ -4,90 +4,82 @@
 using std::exception;
 using std::cout;
 
-struct Noh {
-    int valor;
-    int fatorBalanco;
-    Noh *esq = nullptr;
-    Noh *dir = nullptr;
-    Noh *pai = nullptr;
-};
-
-class AVL
+typedef double TC; typedef float TV;
+struct Noh
 {
-private:
-    Noh *raiz = nullptr;
-public:
-    AVL() : raiz(nullptr) {};
-    ~AVL() { delete raiz; }
-
-    int getAltura() {
-        
-    }
-
-    void rotacaoEsquerda(Noh *n){
-        Noh *nDir = n->dir;
-    }
-
-    void inserir(int v){
-        if (raiz != nullptr)
-            inserir(raiz, v);
-        else{
-            raiz = new Noh;
-            raiz->valor = v;
-        }
-    }
-
-    Noh *inserir(Noh *n, int v) {
-        if (n == nullptr) {
-            n = new Noh;
-            n->valor = v;
-            cout << v << " Inserido" << '\n';
-            return n;
-        } else if (v < n->valor) {
-            n->esq = inserir(n->esq, v);
-            // n = balancear(n);
-        } else if (v >= n->valor) {
-            n->dir = inserir(n->dir, v);
-            // n = balancear(n);
-        }
-        return n;
-    }
-
-
-    Noh *procurar(int v){
-        if (raiz != nullptr)
-            return procurar(raiz, v);
-        else
-            return nullptr;
-    }
-
-    Noh *procurar(Noh *n, int v){
-        if (n == nullptr || v == n->valor)
-            return n;
-        if (v < n->valor)
-            return procurar(n->esq, v);
-        else
-            return procurar(n->dir, v);
-    }
-
+    TC chave;
+    TV valor;
+    Noh *esq, *dir, *pai;
+    int h;
 };
 
+struct DicAVL { 
+    Noh *raiz; 
+};
 
+void inicializar (DicAVL &D){
+    D.raiz = nullptr;
+}
+
+Noh* inserir (DicAVL &D, TC c, TV v){
+    if (D.raiz != nullptr)
+        return inserir(D.raiz, c, v);
+    else{
+        D.raiz = new Noh;
+        D.raiz->chave = c;
+        D.raiz->valor = v;
+        return D.raiz;
+    }
+}
+
+Noh* inserir(Noh *n, TC c, TV v) {
+    if (n == nullptr) {
+        n = new Noh;
+        n->chave = c;
+        n->valor = v;
+        cout << c << " Chave" << '\n';
+        cout << v << " Valor" << '\n';
+        return n;
+    } else if (v < n->valor) {
+        n->esq = inserir(n->esq, c, v);
+        // n = balancear(n);
+    } else if (v >= n->valor) {
+        n->dir = inserir(n->dir, c, v);
+        // n = balancear(n);
+    }
+    return n;
+}
+
+Noh* procurar (DicAVL &D, TC c){
+    if (D.raiz != nullptr)
+        return procurar(D.raiz, c);
+    else
+        return nullptr;
+}
+
+Noh* procurar(Noh *n, TC c){
+    if (n == nullptr || c == n->chave)
+        return n;
+    if (c < n->valor)
+        return procurar(n->esq, c);
+    else
+        return procurar(n->dir, c);
+}
+
+void remover (DicAVL &D, Noh *n);
+
+void terminar (DicAVL &D);
 
 int main(){
-    AVL avl;
+    // DicAVL D;
+    // inicializar(D);
 
-    avl.inserir(3);
-    avl.inserir(5);
-    avl.inserir(1);
-    avl.inserir(4);
-    avl.inserir(2);
-    avl.inserir(6);
+    // cout << inserir(D, 1, 10) << '\n';
+    // cout << inserir(D, 2, 20) << '\n';
+    // cout << procurar(D, 2) << '\n';
+    // remover(D, procurar(D, 2));
 
-    Noh *n = avl.procurar(1);
-
-    cout << n->valor;
-
+    // terminar(D);
 }
 
 // g++ -Wall -Wextra -std=c++17 -pedantic -o avl avl.cpp
