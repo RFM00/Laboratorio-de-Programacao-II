@@ -2,35 +2,20 @@
 #include <fstream>
 #include "heap.h"
 #include "huffman.h"
+#include "arquivo.h"
 
 using namespace std;
+
+
 
 int main() {
     // Vetor de frequências por bytes
     unsigned long long int frequencia[256];
     for (int i = 0; i < 256; i++) frequencia[i] = 0;
 
-    // Abrir arquivo
-    ifstream file("text.txt");                                                                                                                                                                                                                                                                            
-
-    // Identificador do byte
-    unsigned long long int byte;
-
-    // Contador de quantidade de diferentes bytes
     int tamanhoHeap = 0, tamanhoHuffman = 0;
 
-    // Leitor de arquivo
-    while(!file.eof()){
-        byte = file.get();
-        //Contador de frequência
-        if(frequencia[byte] == 0)
-            tamanhoHeap++;
-        ++frequencia[byte];
-    }
-
-    // Fim do arquivo.
-    file.close();
-
+    tamanhoHeap = lerArquivo(frequencia);
     tamanhoHuffman = 2 * tamanhoHeap - 1;
 
     // Criar Árvore de Huffman
@@ -71,6 +56,7 @@ int main() {
         buildMinHeap(heap, tamanhoHeap);
         imprimirHeap(heap, tamanhoHeap);
     }
+
     imprimirArvoreHuffman(huffman, tamanhoHuffman);
 }
 
