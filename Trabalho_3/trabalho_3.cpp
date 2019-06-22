@@ -17,7 +17,7 @@ int main() {
     unsigned long long int byte;
 
     // Contador de quantidade de diferentes bytes
-    int tamanhoHeap = 0;
+    int tamanhoHeap = 0, tamanhoHuffman = 0;
 
     // Leitor de arquivo
     while(!file.eof()){
@@ -31,34 +31,47 @@ int main() {
     // Fim do arquivo.
     file.close();
 
+    tamanhoHuffman = 2 * tamanhoHeap - 1;
+
     // Criar Árvore de Huffman
-    Huffman *huffmanTree = new Huffman[2 * tamanhoHeap - 1];
-    int j = 0;
-    for (int i = 0; i < 256; i++){
-        // Apenas elementos que ocorrem
-        if (frequencia[i] != 0){
-            huffmanTree[j].elem = i;
-            huffmanTree[j].freq = frequencia[i];
-            cout << "HuffmanTree: " << huffmanTree[j].elem << ", " << huffmanTree[j].freq << endl;
-            j++;
-        }
-    }
+    Huffman *huffman = new Huffman[tamanhoHuffman];
+    criarArvore(huffman, frequencia);
 
     // Criar heap contendo os elementos da árvore de huffman
-    Noh *Heap = new Noh[tamanhoHeap];
-    j = 0;
-    for (int i = 0; i < tamanhoHeap; i++){
-        Heap[i].freq = huffmanTree[i].freq;
-        Heap[i].indice = i;
+    Heap *heap = new Heap[tamanhoHeap];
+    criarHeap(heap, huffman, tamanhoHeap);
+
+
+    // Remove os 2 minimos do heap
+    // Insere na arvore com freq = soma das freqs dos nos que entraram
+    // e filho esquerdo e direito referentes a quem foi removido,
+    // Cria um novo no para inserir no heap, onde a freq é a soma, 
+    // e o indice é o indice que foi inserido na arvore de huffman
+
+    int peso = 0;
+    Heap min[2];
+    int indiceHuffmanAtual = tamanhoHeap - 1;
+    imprimirHeap(heap, tamanhoHeap);
+    while (tamanhoHeap > 1){
+        // Remove os 2 nohs minimos;
+        min[0] = removerMin(heap, tamanhoHeap);
+        min[1] = removerMin(heap, tamanhoHeap);
+        
+        // Cria um noh que é a soma dos 2 minimos e adiciona na heap
+        peso = min[0].freq + min[1].freq;
+        heap[tamanhoHeap].freq = peso;
+        heap[tamanhoHeap].indice = indiceHuffmanAtual + 1;
+        indiceHuffmanAtual++;
+        
+        // Adiciona o novo noh na arvore
+        huffman[indiceHuffmanAtual].freq = peso;
+        huffman[indiceHuffmanAtual].esq = min[0].indice;
+        huffman[indiceHuffmanAtual].dir = min[1].indice;
+        tamanhoHeap++;
+        buildMinHeap(heap, tamanhoHeap);
+        imprimirHeap(heap, tamanhoHeap);
     }
-
-    buildMinHeap(Heap, tamanhoHeap);
-
-    while (tamanhoHeap > 0){
-        removerMin(Heap, tamanhoHeap);
-        imprimirHeap(Heap, tamanhoHeap);
-    }
-
+    imprimirArvoreHuffman(huffman, tamanhoHuffman);
 }
 
 //g++ -Wall -Wextra -std=c++17 -pedantic -o executavel_trabalho_3 trabalho_3.cpp
