@@ -1,7 +1,8 @@
 #include <iostream>
 #include <fstream>
-#include "heap.h"
+
 #include "huffman.h"
+#include "heap.h"
 #include "arquivo.h"
 
 using namespace std;
@@ -15,49 +16,32 @@ int main() {
 
     int tamanhoHeap = 0, tamanhoHuffman = 0;
 
-    tamanhoHeap = lerArquivo(frequencia);
-    tamanhoHuffman = 2 * tamanhoHeap - 1;
+    // Ler arquivo a ser compactado
+    // Retorna o numero de caracteres diferentes repetidos
+    tamanhoHeap = lerArquivoCompactar(frequencia, "text.txt");
+    // Ler arquivo a ser descompactado
+    // tamanhoHeap = lerArquivoDescompactar(frequencia, "text.huf");
 
+    // Tamanho da arvore é 2 * heap - 1
+    tamanhoHuffman = 2 * tamanhoHeap - 1;
     // Criar Árvore de Huffman
     Huffman *huffman = new Huffman[tamanhoHuffman];
     criarArvore(huffman, frequencia);
-
     // Criar heap contendo os elementos da árvore de huffman
     Heap *heap = new Heap[tamanhoHeap];
     criarHeap(heap, huffman, tamanhoHeap);
 
+    imprimirArvoreHuffman(huffman, tamanhoHuffman);
 
-    // Remove os 2 minimos do heap
-    // Insere na arvore com freq = soma das freqs dos nos que entraram
-    // e filho esquerdo e direito referentes a quem foi removido,
-    // Cria um novo no para inserir no heap, onde a freq é a soma, 
-    // e o indice é o indice que foi inserido na arvore de huffman
-
-    int peso = 0;
-    Heap min[2];
-    int indiceHuffmanAtual = tamanhoHeap - 1;
-    imprimirHeap(heap, tamanhoHeap);
-    while (tamanhoHeap > 1){
-        // Remove os 2 nohs minimos;
-        min[0] = removerMin(heap, tamanhoHeap);
-        min[1] = removerMin(heap, tamanhoHeap);
-        
-        // Cria um noh que é a soma dos 2 minimos e adiciona na heap
-        peso = min[0].freq + min[1].freq;
-        heap[tamanhoHeap].freq = peso;
-        heap[tamanhoHeap].indice = indiceHuffmanAtual + 1;
-        indiceHuffmanAtual++;
-        
-        // Adiciona o novo noh na arvore
-        huffman[indiceHuffmanAtual].freq = peso;
-        huffman[indiceHuffmanAtual].esq = min[0].indice;
-        huffman[indiceHuffmanAtual].dir = min[1].indice;
-        tamanhoHeap++;
-        buildMinHeap(heap, tamanhoHeap);
-        imprimirHeap(heap, tamanhoHeap);
-    }
+    algoritmoHuffman(huffman, heap, tamanhoHeap);
 
     imprimirArvoreHuffman(huffman, tamanhoHuffman);
+
+    // escreverArquivoCompactado(huffman, "inputs/text.huf", tamanhoHuffman);
+    if (escreverArquivoCompactado(huffman, "inputs/text.huf", tamanhoHuffman))
+        cout << "Arquivo Compactado com sucesso, apesar de ainda nao ter certeza disso" << endl;
+        
+    // escreverArquivoDescompactado(huffman, "text.txt");
 }
 
-//g++ -Wall -Wextra -std=c++17 -pedantic -o executavel_trabalho_3 trabalho_3.cpp
+//g++ -Wall -Wextra -std=c++17 -pedantic -o trabalho_3 trabalho_3.cpp

@@ -1,6 +1,5 @@
 #ifndef HEAP_H
 #define HEAP_H
-#include "huffman.h"
 
 using namespace std;
 
@@ -56,14 +55,6 @@ Heap removerMin(Heap *A, int &tamanho){
     tamanho--;
     buildMinHeap(A, tamanho);
     return A[tamanho];
-}
-
-void criarHeap(Heap *A, Huffman *H, int tamanho){
-    for (int i = 0; i < tamanho; i++){
-        A[i].freq = H[i].freq;
-        A[i].indice = i;
-    }
-    buildMinHeap(A, tamanho);
 }
 
 void imprimirHeap(Heap *A, int tamanho){
