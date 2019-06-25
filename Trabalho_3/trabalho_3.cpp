@@ -9,24 +9,24 @@ using namespace std;
 
 
 
-int main() {
+int main(int argc, char** argv) {
+
+    if(argv[1] == "--compactar")
+        cout << "Bora compactar";
     // Vetor de frequências por bytes
     unsigned long long int frequencia[256];
-    for (int i = 0; i < 256; i++) frequencia[i] = 0;
-
-    int tamanhoHeap = 0, tamanhoHuffman = 0;
+    int tamanhoHeap, tamanhoHuffman, totalOriginalBits;
 
     // Ler arquivo a ser compactado
     // Retorna o numero de caracteres diferentes repetidos
-    tamanhoHeap = lerArquivoCompactar(frequencia, "text.txt");
-    // Ler arquivo a ser descompactado
-    // tamanhoHeap = lerArquivoDescompactar(frequencia, "text.huf");
+    CompactarLeitura("text.txt", frequencia, tamanhoHeap, totalOriginalBits);
 
+    // Criar Árvore de Huffman com tamanho adequado
     // Tamanho da arvore é 2 * heap - 1
     tamanhoHuffman = 2 * tamanhoHeap - 1;
-    // Criar Árvore de Huffman
     Huffman *huffman = new Huffman[tamanhoHuffman];
     criarArvore(huffman, frequencia);
+
     // Criar heap contendo os elementos da árvore de huffman
     Heap *heap = new Heap[tamanhoHeap];
     criarHeap(heap, huffman, tamanhoHeap);
@@ -38,10 +38,12 @@ int main() {
     imprimirArvoreHuffman(huffman, tamanhoHuffman);
 
     // escreverArquivoCompactado(huffman, "inputs/text.huf", tamanhoHuffman);
-    if (escreverArquivoCompactado(huffman, "inputs/text.huf", tamanhoHuffman))
-        cout << "Arquivo Compactado com sucesso, apesar de ainda nao ter certeza disso" << endl;
-        
-    // escreverArquivoDescompactado(huffman, "text.txt");
+    if (CompactarEscrita("inputs/text.huf", huffman, tamanhoHuffman))
+        cout << "Arquivo Compactado com sucesso" << endl;
+
+    // Descompactar.
+    // Huffman *newHuffman;
+    // DescompactarLeitura("text.huf", newHuffman);
 }
 
 //g++ -Wall -Wextra -std=c++17 -pedantic -o trabalho_3 trabalho_3.cpp

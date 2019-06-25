@@ -4,7 +4,7 @@
 using namespace std;
 
 struct Heap{
-    int freq = -1;
+    unsigned long long int freq;
     int indice = -1;
 };
 

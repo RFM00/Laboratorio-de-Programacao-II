@@ -2,12 +2,13 @@
 #define HUFFMAN_H
 
 #include "heap.h"
+#include <cstring>
 
 using namespace std;
 
 struct Huffman{
-    unsigned int elem = '\0';
-    int freq = 0;
+    unsigned char elem = '\0';
+    unsigned long long int freq = 0;
     int dir = -1;
     int esq = -1;
 };
@@ -24,15 +25,36 @@ void criarArvore(Huffman *noh, unsigned long long int *frequencia){
     }
 }
 
-void criarHeap(Heap *A, Huffman *H, int tamanho){
-    for (int i = 0; i < tamanho; i++){
+void criarHeap(Heap *A, Huffman *H, int tamanhoHeap){
+    for (int i = 0; i < tamanhoHeap; i++){
         A[i].freq = H[i].freq;
         A[i].indice = i;
     }
-    buildMinHeap(A, tamanho);
+    buildMinHeap(A, tamanhoHeap);
 }
 
+void criarCodificacao(Huffman *huffman, int qtdElementos){
+    // string code[256];
+    // string aux;
 
+    // int count = 0;
+    // Huffman *raiz = huffman + 2 * qtdElementos - 1;
+    // while (count < qtdElementos){
+    //     if (raiz->esq != -1){
+    //         aux += '0';
+    //         raiz = huffman + raiz->esq;
+    //     }else if (raiz->dir != -1){
+    //         aux += '1';
+    //         raiz = huffman + raiz->dir;
+    //     }else {
+    //         aux += '\0';
+    //         code[raiz->elem] += aux;
+    //         raiz->elem = -1;
+
+    //         raiz = huffman + 2 * qtdElementos - 1;
+    //     }
+    // }
+}
 
 // Remove os 2 minimos do heap
 // Insere na arvore com freq = soma das freqs dos nos que entraram
@@ -68,11 +90,11 @@ Heap algoritmoHuffman(Huffman *huffman, Heap *heap, int tamanhoHeap){
     return heap[0];
 }
 
-void imprimirArvoreHuffman(Huffman *noh, int tamanho){
+void imprimirArvoreHuffman(Huffman *huffman, int tamanho){
     cout << '\n';
     for (int i = 0; i < tamanho; i++){
-        cout << "HuffmanTree " << i <<" : " << noh[i].elem << ", " << noh[i].freq 
-        << "| " << noh[i].esq << ", " << noh[i].dir << endl;
+        cout << "HuffmanTree " << i <<" : " << huffman[i].elem << ", " << huffman[i].freq 
+        << "| " << huffman[i].esq << ", " << huffman[i].dir << endl;
     }
 }
 
