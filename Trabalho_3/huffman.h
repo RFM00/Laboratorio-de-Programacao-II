@@ -2,7 +2,7 @@
 #define HUFFMAN_H
 
 #include "heap.h"
-#include <cstring>
+#include <string>
 
 using namespace std;
 
@@ -33,27 +33,53 @@ void criarHeap(Heap *A, Huffman *H, int tamanhoHeap){
     buildMinHeap(A, tamanhoHeap);
 }
 
-void criarCodificacao(Huffman *huffman, int qtdElementos){
-    // string code[256];
-    // string aux;
+void criarCodificacao(Huffman *huffman, int tamanhoHuffman){
+    string code[256];
+    string aux;
+    Huffman *pai, *raiz = huffman + tamanhoHuffman - 1;
+    int count = 0;
+    while (count <= (tamanhoHuffman - 1) / 2 ){
+        if (raiz->esq != -1){
+            aux += '0';
+            pai = raiz;
+            raiz = huffman + raiz->esq;
+        }else if (raiz->dir != -1){
+            aux += '1';
+            pai = raiz;
+            raiz = huffman + raiz->dir;
+        }else {
+            if (huffman[pai->esq].elem == raiz->elem)
+                pai->esq = -1;
+            else
+                pai->dir = -1;
 
-    // int count = 0;
-    // Huffman *raiz = huffman + 2 * qtdElementos - 1;
-    // while (count < qtdElementos){
-    //     if (raiz->esq != -1){
-    //         aux += '0';
-    //         raiz = huffman + raiz->esq;
-    //     }else if (raiz->dir != -1){
-    //         aux += '1';
-    //         raiz = huffman + raiz->dir;
-    //     }else {
-    //         aux += '\0';
-    //         code[raiz->elem] += aux;
-    //         raiz->elem = -1;
+            if (raiz->elem == '\0'){
+                raiz = huffman + tamanhoHuffman - 1;
+                aux.clear();
+                continue;
+            }
+            code[raiz->elem].append(aux);
+            aux.clear();
+            raiz = huffman + tamanhoHuffman - 1;
+            count++;
+        }
+    }
 
-    //         raiz = huffman + 2 * qtdElementos - 1;
-    //     }
+    // ifstream in("inputs/text.txt");
+    // unsigned long long
+    // while(!in.eof()){ 
+    //     in.get();
     // }
+    // // Fim do arquivo.
+    // in.close();
+
+    cout << "Codificacao" << endl;
+    for (int i = 0; i < 256; i++){
+        if(!code[i].empty())
+            cout << (unsigned char)i << ": " << code[i] << endl;
+    }
+    
+
 }
 
 // Remove os 2 minimos do heap
@@ -66,7 +92,7 @@ Heap algoritmoHuffman(Huffman *huffman, Heap *heap, int tamanhoHeap){
     int peso = 0;
     Heap min[2];
     int indiceHuffmanAtual = tamanhoHeap - 1;
-    imprimirHeap(heap, tamanhoHeap);
+    // imprimirHeap(heap, tamanhoHeap);
     while (tamanhoHeap > 1){
         // Remove os 2 nohs minimos;
         min[0] = removerMin(heap, tamanhoHeap);
@@ -84,7 +110,7 @@ Heap algoritmoHuffman(Huffman *huffman, Heap *heap, int tamanhoHeap){
         huffman[indiceHuffmanAtual].esq = min[1].indice;
         tamanhoHeap++;
         buildMinHeap(heap, tamanhoHeap);
-        imprimirHeap(heap, tamanhoHeap);
+        // imprimirHeap(heap, tamanhoHeap);
     }
 
     return heap[0];

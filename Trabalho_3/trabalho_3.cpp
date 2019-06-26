@@ -9,10 +9,8 @@ using namespace std;
 
 
 
-int main(int argc, char** argv) {
+int main() {
 
-    if(argv[1] == "--compactar")
-        cout << "Bora compactar";
     // Vetor de frequências por bytes
     unsigned long long int frequencia[256];
     int tamanhoHeap, tamanhoHuffman, totalOriginalBits;
@@ -31,7 +29,7 @@ int main(int argc, char** argv) {
     Heap *heap = new Heap[tamanhoHeap];
     criarHeap(heap, huffman, tamanhoHeap);
 
-    imprimirArvoreHuffman(huffman, tamanhoHuffman);
+    // imprimirArvoreHuffman(huffman, tamanhoHuffman);
 
     algoritmoHuffman(huffman, heap, tamanhoHeap);
 
@@ -41,6 +39,7 @@ int main(int argc, char** argv) {
     if (CompactarEscrita("inputs/text.huf", huffman, tamanhoHuffman))
         cout << "Arquivo Compactado com sucesso" << endl;
 
+    criarCodificacao(huffman, tamanhoHuffman);
     // Descompactar.
     // Huffman *newHuffman;
     // DescompactarLeitura("text.huf", newHuffman);
