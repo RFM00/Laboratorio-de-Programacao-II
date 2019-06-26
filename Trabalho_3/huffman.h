@@ -25,12 +25,12 @@ void criarArvore(Huffman *noh, unsigned long long int *frequencia){
     }
 }
 
-void criarHeap(Heap *A, Huffman *H, int tamanhoHeap){
-    for (int i = 0; i < tamanhoHeap; i++){
+void criarHeap(Heap *A, Huffman *H, int numeroElementos){
+    for (int i = 0; i < numeroElementos; i++){
         A[i].freq = H[i].freq;
         A[i].indice = i;
     }
-    buildMinHeap(A, tamanhoHeap);
+    buildMinHeap(A, numeroElementos);
 }
 
 // Remove os 2 minimos do heap
@@ -39,29 +39,29 @@ void criarHeap(Heap *A, Huffman *H, int tamanhoHeap){
 // Cria um novo no para inserir no heap, onde a freq é a soma, 
 // e o indice é o indice que foi inserido na arvore de huffman
 
-Heap algoritmoHuffman(Huffman *huffman, Heap *heap, int tamanhoHeap){
+Heap algoritmoHuffman(Huffman *huffman, Heap *heap, int numeroElementos){
     int peso = 0;
     Heap min[2];
-    int indiceHuffmanAtual = tamanhoHeap - 1;
-    // imprimirHeap(heap, tamanhoHeap);
-    while (tamanhoHeap > 1){
+    int indiceHuffmanAtual = numeroElementos - 1;
+    // imprimirHeap(heap, numeroElementos);
+    while (numeroElementos > 1){
         // Remove os 2 nohs minimos;
-        min[0] = removerMin(heap, tamanhoHeap);
-        min[1] = removerMin(heap, tamanhoHeap);
+        min[0] = removerMin(heap, numeroElementos);
+        min[1] = removerMin(heap, numeroElementos);
         
         // Cria um noh que é a soma dos 2 minimos e adiciona na heap
         peso = min[0].freq + min[1].freq;
-        heap[tamanhoHeap].freq = peso;
-        heap[tamanhoHeap].indice = indiceHuffmanAtual + 1;
+        heap[numeroElementos].freq = peso;
+        heap[numeroElementos].indice = indiceHuffmanAtual + 1;
         indiceHuffmanAtual++;
         
         // Adiciona o novo noh na arvore
         huffman[indiceHuffmanAtual].freq = peso;
         huffman[indiceHuffmanAtual].dir = min[0].indice;
         huffman[indiceHuffmanAtual].esq = min[1].indice;
-        tamanhoHeap++;
-        buildMinHeap(heap, tamanhoHeap);
-        // imprimirHeap(heap, tamanhoHeap);
+        numeroElementos++;
+        buildMinHeap(heap, numeroElementos);
+        // imprimirHeap(heap, numeroElementos);
     }
 
     return heap[0];
