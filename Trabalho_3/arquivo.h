@@ -31,6 +31,18 @@ void CompactarLeitura(string nomeArquivo, unsigned long long int frequencia[256]
     in.close();
 }
 
+void BFS(string code[256], string aux, Huffman *huffman, int tamanho, int i){
+    cout << "Indice Atual: " << i << endl;
+    if (i != -1){
+        BFS(code, aux, huffman, tamanho, (huffman + i)->esq);
+        if((huffman + i)->elem != '\0'){
+            
+            cout << "Elem: " << (huffman + i)->elem << endl;
+        }
+        BFS(code, aux, huffman, tamanho, (huffman + i)->dir);
+    }
+}
+
 void codificador(string code[256], Huffman *huffman, int numeroElementos){
     int tamanhoHuffman = 2 * numeroElementos - 1;
     string aux;
@@ -39,6 +51,7 @@ void codificador(string code[256], Huffman *huffman, int numeroElementos){
     cout << "Debug codificacao..." << endl;
     cout << "Numero de elementos: " << numeroElementos << endl;
     while (count < numeroElementos){
+        cout << "count: " << count << endl;
         if (raiz->esq != -1){
             aux += '0';
             pai = raiz;
@@ -52,11 +65,10 @@ void codificador(string code[256], Huffman *huffman, int numeroElementos){
                 pai->esq = -1;
             else
                 pai->dir = -1;
-
             if (raiz->elem == '\0'){
                 raiz = huffman + tamanhoHuffman - 1;
                 aux.clear();
-                cout << "Esta loopando aqui?" << endl;
+                // cout << "Esta loopando aqui?" << endl;
                 continue;
             }
             code[raiz->elem].append(aux);
@@ -93,7 +105,7 @@ void CompactarEscrita(string nomeArquivoOriginal, string nomeArquivoCompactado){
     // Utilizar algoritmo de Huffman para construir a Árvore desejada
     cout << "Executando algoritmo..." << endl;
     algoritmoHuffman(huffman, heap, numeroElementos);
-    // imprimirArvoreHuffman(huffman, tamanhoHuffman);
+    imprimirArvoreHuffman(huffman, tamanhoHuffman);
     cout << "Algoritmo executado!" << endl;
 
     // Criar arquivo
@@ -110,6 +122,11 @@ void CompactarEscrita(string nomeArquivoOriginal, string nomeArquivoCompactado){
 
     // Codificador, BFS 
     string code[256];
+
+    // BFS(huffman, tamanhoHuffman, tamanhoHuffman - 1);
+    // cout << "BFS" << endl;
+    // getchar();
+    
     cout << "Gerando codificacao..." << endl;
     codificador(code, huffman, numeroElementos);
     cout << "Arquivo Codificado!" << endl;

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <time.h>
 
 #include "huffman.h"
 #include "heap.h"
@@ -15,15 +16,19 @@ int main(int argc, char **argv) {
         cout << "\\.trabalho_3 --descompactar arquivo.huf arquivo.txt ";
         exit(1);
     } 
-    if (((string)argv[1] == (string)"--compactar")){
+    clock_t t0;
+    if (((string)argv[1] == "--compactar")){
         // Compactação
+        t0 = clock();
         CompactarEscrita(argv[2], argv[3]);
         cout << "Arquivo Compactado com sucesso" << endl;
-    } else if (((string)argv[1] == (string)"--descompactar")){
+        cout << "Tempo Gasto: " << (double)(clock() - t0) / CLOCKS_PER_SEC << " segundos.\n";
+    } else if (((string)argv[1] == "--descompactar")){
         // Descompactação.
+        t0 = clock();
         Descompactar(argv[2], argv[3]);
         cout << "Arquivo Descompactado com sucesso" << endl;
-        // Huffman *newHuffman;
+        cout << "Tempo Gasto: " << (double)(clock() - t0) / CLOCKS_PER_SEC << " segundos.\n";
     }
 }
 
