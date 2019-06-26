@@ -33,12 +33,14 @@ void CompactarLeitura(string nomeArquivo, unsigned long long int frequencia[256]
 
 bool CompactarEscrita(string nomeArquivoOriginal, string nomeArquivoCompactado, Huffman *huffman, int tamanhoHuffman, int totalOriginalBits){
     // Criar arquivo
-    ofstream out(nomeArquivoCompactado, ios::binary);
+    ifstream in("inputs/" + nomeArquivoOriginal);
+    ofstream out("inputs/" + nomeArquivoCompactado, ios::binary);
     // Dizer onde começa a leitura e até onde vai
     // Tamanho da árvore em inteiro
+    cout << "Tamanho do huffman original = " << tamanhoHuffman << endl;
     out.write((char*)&tamanhoHuffman, sizeof(tamanhoHuffman));
     // Árvore de Huffman
-    out.write((char*)&huffman, ((2 * tamanhoHuffman) - 1) * sizeof(Huffman));
+    out.write((char*)&huffman, tamanhoHuffman * sizeof(Huffman));
     // Total original de Bits
     out.write((char*)&totalOriginalBits, sizeof(totalOriginalBits));
     
@@ -82,7 +84,7 @@ bool CompactarEscrita(string nomeArquivoOriginal, string nomeArquivoCompactado, 
     }
     cout << endl;
 
-    ifstream in(nomeArquivoOriginal);
+    
     unsigned char bit;
     while(!in.eof()){
         bit = in.get();
@@ -101,32 +103,46 @@ bool CompactarEscrita(string nomeArquivoOriginal, string nomeArquivoCompactado, 
 
 // Descompactar
 
-void DescompactarLeitura(string nomeArquivo, Huffman *huffman){
-    ifstream in("inputs/" + nomeArquivo);
+void Descompactar(string nomeArquivoCompactado, string nomeArquivoOriginal){
+    ifstream in("inputs/" + nomeArquivoCompactado);
+    ofstream out(nomeArquivoOriginal, ios::binary);
 
-    // Identificador do byte
-    // unsigned char byte;
-    // Contador de quantidade de diferentes bytes
-    int tamanhoHuffman;
 
+    int tamanhoHuffman, totalOriginalBits;
     // Ler a primeira informação do arquivo, que é o tamanho da arvore
     in.read((char*)&tamanhoHuffman, sizeof(tamanhoHuffman));
-    cout << "Tamanho Huffman " << tamanhoHuffman << endl;
+    cout << "Tamanho do huffman recuperado = " << tamanhoHuffman << endl;
 
     // Criar a árvore do tamanho da árvore referente
-    huffman = new Huffman[tamanhoHuffman];
+    Huffman *huffman = new Huffman[tamanhoHuffman];
     // Ler para arvore
-    in.read((char*)&huffman, ((2 * tamanhoHuffman) - 1) * sizeof(Huffman));
+    in.read((char*)&huffman, tamanhoHuffman * sizeof(Huffman));
     
     cout << "Arvore recuperada do arquivo" << endl;
+    cout << "Tamanho do huffman recuperado = " << tamanhoHuffman << endl;
     imprimirArvoreHuffman(huffman, tamanhoHuffman);
-    
+
+    // Ler total Original de Bits
+    in.read((char *)&totalOriginalBits, sizeof(totalOriginalBits));
+    // Ler parte compactada
+    Huffman *raiz = huffman + tamanhoHuffman - 1;
+    unsigned char bit;
+    int count = 0;
+    while(!in.eof() && count < totalOriginalBits){
+        bit = in.get();
+        if(raiz->elem == '\0'){
+            if(bit == 0)
+                raiz = huffman + raiz->esq;
+            else
+                raiz = huffman + raiz->dir;
+        }else
+            out.write((char *)&raiz->elem, sizeof(raiz->elem));
+        count++;
+    }
+
     in.close();
+    out.close();
 }
-
-// void DescompactarEscrita(string nomeArquivo, Huffman *huffman){
-
-// }
 
 
 #endif

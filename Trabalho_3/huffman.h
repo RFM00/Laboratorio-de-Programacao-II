@@ -33,45 +33,6 @@ void criarHeap(Heap *A, Huffman *H, int tamanhoHeap){
     buildMinHeap(A, tamanhoHeap);
 }
 
-void criarCodificacao(Huffman *huffman, int tamanhoHuffman){
-    string code[256];
-    string aux;
-    Huffman *pai, *raiz = huffman + tamanhoHuffman - 1;
-    int count = 0;
-    while (count <= (tamanhoHuffman - 1) / 2 ){
-        if (raiz->esq != -1){
-            aux += '0';
-            pai = raiz;
-            raiz = huffman + raiz->esq;
-        }else if (raiz->dir != -1){
-            aux += '1';
-            pai = raiz;
-            raiz = huffman + raiz->dir;
-        }else {
-            if (huffman[pai->esq].elem == raiz->elem)
-                pai->esq = -1;
-            else
-                pai->dir = -1;
-
-            if (raiz->elem == '\0'){
-                raiz = huffman + tamanhoHuffman - 1;
-                aux.clear();
-                continue;
-            }
-            code[raiz->elem].append(aux);
-            aux.clear();
-            raiz = huffman + tamanhoHuffman - 1;
-            count++;
-        }
-    }
-
-    cout << "Codificacao" << endl;
-    for (int i = 0; i < 256; i++){
-        if(!code[i].empty())
-            cout << (unsigned char)i << ": " << code[i] << endl;
-    }
-}
-
 // Remove os 2 minimos do heap
 // Insere na arvore com freq = soma das freqs dos nos que entraram
 // e filho esquerdo e direito referentes a quem foi removido,
