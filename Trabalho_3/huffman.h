@@ -65,21 +65,11 @@ void criarCodificacao(Huffman *huffman, int tamanhoHuffman){
         }
     }
 
-    // ifstream in("inputs/text.txt");
-    // unsigned long long
-    // while(!in.eof()){ 
-    //     in.get();
-    // }
-    // // Fim do arquivo.
-    // in.close();
-
     cout << "Codificacao" << endl;
     for (int i = 0; i < 256; i++){
         if(!code[i].empty())
             cout << (unsigned char)i << ": " << code[i] << endl;
     }
-    
-
 }
 
 // Remove os 2 minimos do heap

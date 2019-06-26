@@ -36,10 +36,10 @@ int main() {
     imprimirArvoreHuffman(huffman, tamanhoHuffman);
 
     // escreverArquivoCompactado(huffman, "inputs/text.huf", tamanhoHuffman);
-    if (CompactarEscrita("inputs/text.huf", huffman, tamanhoHuffman))
+    if (CompactarEscrita("inputs/text.txt", "inputs/text.huf", huffman, tamanhoHuffman, totalOriginalBits))
         cout << "Arquivo Compactado com sucesso" << endl;
 
-    criarCodificacao(huffman, tamanhoHuffman);
+    // criarCodificacao(huffman, tamanhoHuffman);
     // Descompactar.
     // Huffman *newHuffman;
     // DescompactarLeitura("text.huf", newHuffman);

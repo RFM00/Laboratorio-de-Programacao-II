@@ -31,15 +31,69 @@ void CompactarLeitura(string nomeArquivo, unsigned long long int frequencia[256]
     in.close();
 }
 
-bool CompactarEscrita(string nomeArquivo, Huffman *huffman, int tamanhoHuffman){
+bool CompactarEscrita(string nomeArquivoOriginal, string nomeArquivoCompactado, Huffman *huffman, int tamanhoHuffman, int totalOriginalBits){
     // Criar arquivo
-    ofstream out(nomeArquivo, ios::binary);
+    ofstream out(nomeArquivoCompactado, ios::binary);
     // Dizer onde começa a leitura e até onde vai
     // Tamanho da árvore em inteiro
     out.write((char*)&tamanhoHuffman, sizeof(tamanhoHuffman));
     // Árvore de Huffman
     out.write((char*)&huffman, ((2 * tamanhoHuffman) - 1) * sizeof(Huffman));
+    // Total original de Bits
+    out.write((char*)&totalOriginalBits, sizeof(totalOriginalBits));
     
+    // Arquivo Compactado
+    // Codificador
+    string code[256];
+    string aux;
+    Huffman *pai, *raiz = huffman + tamanhoHuffman - 1;
+    int count = 0;
+    while (count <= (tamanhoHuffman - 1) / 2 ){
+        if (raiz->esq != -1){
+            aux += '0';
+            pai = raiz;
+            raiz = huffman + raiz->esq;
+        }else if (raiz->dir != -1){
+            aux += '1';
+            pai = raiz;
+            raiz = huffman + raiz->dir;
+        }else {
+            if (huffman[pai->esq].elem == raiz->elem)
+                pai->esq = -1;
+            else
+                pai->dir = -1;
+
+            if (raiz->elem == '\0'){
+                raiz = huffman + tamanhoHuffman - 1;
+                aux.clear();
+                continue;
+            }
+            code[raiz->elem].append(aux);
+            aux.clear();
+            raiz = huffman + tamanhoHuffman - 1;
+            count++;
+        }
+    }
+
+    cout << "Codificacao" << endl;
+    for (int i = 0; i < 256; i++){
+        if(!code[i].empty())
+            cout << (unsigned char)i << ": " << code[i] << endl;
+    }
+    cout << endl;
+
+    ifstream in(nomeArquivoOriginal);
+    unsigned char bit;
+    while(!in.eof()){
+        bit = in.get();
+        for (unsigned int i = 0; i < code[bit].size(); i++){
+            out.write((char *)&code[bit][i], sizeof(code[bit][i]));
+            cout << code[bit][i] << ": " << sizeof(code[bit][i]) << endl;
+        }
+    }
+    cout << endl;
+
+    in.close();
     out.close();
     return true;
 }
