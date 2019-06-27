@@ -50,6 +50,7 @@ void codificador(string code[256], Huffman *huffman, int numeroElementos){
     int count = 0;
     cout << "Debug codificacao..." << endl;
     cout << "Numero de elementos: " << numeroElementos << endl;
+    getchar();
     while (count < numeroElementos){
         cout << "count: " << count << endl;
         if (raiz->esq != -1){
