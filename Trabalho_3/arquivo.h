@@ -31,44 +31,34 @@ void CompactarLeitura(string nomeArquivo, unsigned long long int frequencia[256]
     in.close();
 }
 
-void BFS(string code[256], string &aux, Huffman *huffman, Huffman *controle[256], int i){
-    cout << "Indice Atual: " << i << endl;
-    cout << "aux = " << aux << endl;
-    if (controle[i] != nullptr){
+void BFS(string code[256], string &aux, Huffman *huffman, int i){
+    // cout << "Indice Atual: " << i << endl;
+    // cout << "aux = " << aux << endl;
+    // if (controle[i] != nullptr){
+    if (!(huffman[i].dir == -1 && huffman[i].esq == -1)){
         aux += '0';
-        BFS(code, aux, huffman, controle, (huffman + i)->esq);
+        BFS(code, aux, huffman, (huffman + i)->esq);
         aux += '1';
-        BFS(code, aux, huffman, controle, (huffman + i)->dir);
+        BFS(code, aux, huffman, (huffman + i)->dir);
         // code[huffman[i].elem].append(aux);
     } else 
         code[huffman[i].elem].append(aux);
     aux.pop_back();
-
 }
 
 void codificador(string code[256], Huffman *huffman, int numeroElementos){
-    // int tamanhoHuffman = 2 * numeroElementos - 1;
-    Huffman *controle[256];
-    for (int i = 0; i < 2 * numeroElementos - 1; i++)
-        if (huffman[i].dir == -1 || huffman[i].esq == -1)
-            controle[i] = nullptr;
-        else
-            controle[i] = &huffman[i];
-    
-
-    cout << "Debug codificacao..." << endl;
-    cout << "Numero de elementos: " << numeroElementos << endl;
-    cout << "Tamanho da arvore de huffman: " << 2 * numeroElementos - 1 << endl;
+    // cout << "Debug codificacao..." << endl;
+    // cout << "Numero de elementos: " << numeroElementos << endl;
+    // cout << "Tamanho da arvore de huffman: " << 2 * numeroElementos - 1 << endl;
     string aux;
-    cout << "aux: " << aux << endl;
+    // cout << "aux: " << aux << endl;
     // getchar();
 
-    BFS(code, aux, huffman, controle, 2 * numeroElementos - 1 - 1);
+    BFS(code, aux, huffman, 2 * numeroElementos - 2);
 
-    for (int i = 0; i < 256; i++){
+    for (int i = 0; i < 256; i++)
         if(!code[i].empty())
             cout << "Byte: " << (unsigned char)i << " Code: " << code[i] << endl;
-    }
 }
 
 void CompactarEscrita(string nomeArquivoOriginal, string nomeArquivoCompactado){
@@ -103,7 +93,7 @@ void CompactarEscrita(string nomeArquivoOriginal, string nomeArquivoCompactado){
 
     // Criar arquivo
     ifstream in("inputs/" + nomeArquivoOriginal, ios::binary);
-    ofstream out("inputs/" + nomeArquivoCompactado, ios::binary);
+    ofstream out("hufs/" + nomeArquivoCompactado, ios::binary);
 
     // Tamanho da árvore em inteiro
     // cout << "Tamanho do huffman original = " << tamanhoHuffman << endl;
@@ -118,7 +108,7 @@ void CompactarEscrita(string nomeArquivoOriginal, string nomeArquivoCompactado){
 
     cout << "Gerando codificacao..." << endl;
     codificador(code, huffman, numeroElementos);
-    cout << "Arquivo Codificado!" << endl;
+    cout << "Arquivo codificado!" << endl;
     // Arquivo codificado
     // cout << "Codificacao" << endl;
     unsigned char bit;
@@ -139,9 +129,9 @@ void CompactarEscrita(string nomeArquivoOriginal, string nomeArquivoCompactado){
     cout << "Compactacao Completa" << endl;
     cout << "Tamanho da Arvore de Huffman: " << tamanhoHuffman << endl;
     cout << "Arvore de Huffman" << endl;
-    imprimirArvoreHuffman(huffman, tamanhoHuffman);
+    // imprimirArvoreHuffman(huffman, tamanhoHuffman);
     cout << "Numero de Bits Original: " << totalOriginalBits << endl;
-    cout << "Codificao do arquivo: " << endl;
+    // cout << "Codificao do arquivo: " << endl;
     
     // cout << endl;
 }
@@ -150,7 +140,8 @@ void CompactarEscrita(string nomeArquivoOriginal, string nomeArquivoCompactado){
 // Descompactar
 
 void Descompactar(string nomeArquivoCompactado, string nomeArquivoOriginal){
-    ifstream in("inputs/" + nomeArquivoCompactado, ios::binary);
+    cout << "Iniciando Descompactacao..." << endl;
+    ifstream in("hufs/" + nomeArquivoCompactado, ios::binary);
     ofstream out("outputs/" + nomeArquivoOriginal, ios::binary);
     int bitsTotal = 0;
     int tamanhoHuffman, totalOriginalBits;
@@ -166,8 +157,8 @@ void Descompactar(string nomeArquivoCompactado, string nomeArquivoOriginal){
     bitsTotal += tamanhoHuffman * sizeof(Huffman);
     cout << "Tamanho da Arvore de Huffman Recuperado: " << tamanhoHuffman << endl;
 
-    cout << "Arvore Recuperada" << endl;
-    imprimirArvoreHuffman(huffman, tamanhoHuffman);
+    cout << "Arvore Recuperada..." << endl;
+    // imprimirArvoreHuffman(huffman, tamanhoHuffman);
     cout << endl;
     // Ler total Original de Bits
     in.read((char *)&totalOriginalBits, sizeof(totalOriginalBits));
@@ -183,7 +174,8 @@ void Descompactar(string nomeArquivoCompactado, string nomeArquivoOriginal){
     bitsTotal++;
     while(count < totalOriginalBits - 1){ // && count < totalOriginalBits
         bitsTotal++;
-        if(raiz->elem == '\0'){
+        // if(raiz->elem == '\0'){
+        if(!(raiz->dir == -1 && raiz->esq == -1)){
             if(bit == (unsigned char)'0'){
                 raiz = huffman + raiz->esq;
                 // cout << "Foi para esquerda" << endl;
@@ -205,7 +197,7 @@ void Descompactar(string nomeArquivoCompactado, string nomeArquivoOriginal){
     in.close();
     out.close();
 
-    cout << "O ARQUIVO COMPACTADO TEM UM TOTAL DE " << bitsTotal << "bits" << endl;
+    cout << "Arquivo compactado tem no total " << bitsTotal << " bits" << endl;
 }
 
 

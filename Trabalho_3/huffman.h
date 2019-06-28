@@ -7,10 +7,10 @@
 using namespace std;
 
 struct Huffman{
-    unsigned char elem = '\0';
-    unsigned long long int freq = 0;
-    int dir = -1;
-    int esq = -1;
+    unsigned char elem;
+    unsigned long long int freq;
+    short int dir = -1;
+    short int esq = -1;
 };
 
 void criarArvore(Huffman *noh, unsigned long long int *frequencia){

@@ -3,10 +3,15 @@
 
 using namespace std;
 
-struct Noh
-{
-    int num;
+struct Huffman{
+    unsigned char elem;
+    unsigned long long int freq;
+    short int dir = -1;
+    short int esq = -1;
 };
+
+
+
 
 
 int main(){
@@ -19,21 +24,24 @@ int main(){
     // }
     // out.close();
 
-    ifstream in("bytes.txt", ios::binary);
+    // ifstream in("bytes.txt", ios::binary);
 
-    for (int i = 0; i < 256; i++){
-        if (in.get() == i)
-            cout << "o caracter " << (unsigned char)i << " eh o byte: " << i << endl;
-    }
+    // for (int i = 0; i < 256; i++){
+    //     if (in.get() == i)
+    //         cout << "o caracter " << (unsigned char)i << " eh o byte: " << i << endl;
+    // }
 
-    unsigned char byte;
-    while (in.eof())
-    {
-        byte = in.get();
-        cout << byte << endl;
-    }
+    // unsigned char byte;
+    // while (in.eof())
+    // {
+    //     byte = in.get();
+    //     cout << byte << endl;
+    // }
     
-    in.close();
+    // in.close();
+
+    Huffman noh;
+    cout << sizeof(noh) << endl;
 
     return 0;
 }

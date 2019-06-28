@@ -29,6 +29,8 @@ int main(int argc, char **argv) {
         Descompactar(argv[2], argv[3]);
         cout << "Arquivo Descompactado com sucesso" << endl;
         cout << "Tempo Gasto: " << (double)(clock() - t0) / CLOCKS_PER_SEC << " segundos.\n";
+    } else {
+        cout << "\nFormato incorreto, tente novamente" << endl;
     }
 }
 
