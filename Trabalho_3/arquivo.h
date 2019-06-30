@@ -164,7 +164,7 @@ void CompactarEscrita(string nomeArquivoOriginal, string nomeArquivoCompactado){
             if (code[b][i] == '1') buffer |= 1; // Set 1 if necessary.
             count++; // Remember we have added a bit.
             if (count == 8) {
-                print_byte_as_bits(buffer);
+                // print_byte_as_bits(buffer);
                 out.write((char*)&buffer, sizeof(buffer)); // writing code
                 buffer = 0;
                 count = 0;
@@ -173,7 +173,7 @@ void CompactarEscrita(string nomeArquivoOriginal, string nomeArquivoCompactado){
     }
     if (count != 0) {
         buffer <<= (8 - count);
-        print_byte_as_bits(buffer);
+        // print_byte_as_bits(buffer);
         out.write((char*)&buffer, sizeof(buffer));
     }
 
@@ -241,29 +241,29 @@ void Descompactar(string nomeArquivoCompactado, string nomeArquivoOriginal){
         // if(raiz->elem == '\0'){
         if(!(raiz->dir == -1 && raiz->esq == -1)){
             // if(byte == (unsigned char)'0'){
-            cout << "Bit: " << getBit(byte, 7 - posicao) << " na Posicao: " << posicao << endl;
+            // cout << "Bit: " << getBit(byte, 7 - posicao) << " na Posicao: " << posicao << endl;
             if(!getBit(byte, 7 - posicao)){
                 raiz = huffman + raiz->esq;
-                cout << "Foi para esquerda" << endl;
+                // cout << "Foi para esquerda" << endl;
             }
             else{
                 raiz = huffman + raiz->dir;
-                cout << "Foi para direita" << endl;
+                // cout << "Foi para direita" << endl;
             }
             // count++;
             // posicao % 8 == 0 ? posicao = 0 : posicao++;
-            
-            if (posicao + 1 % 8 == 0){
+            posicao++;
+            if (posicao == 8){
                 byte = in.get();     
                 posicao = 0;
-                print_byte_as_bits(byte);
+                // print_byte_as_bits(byte);
             }
-            else
-                posicao++;
+            // else
+            //     posicao++;
 
         }else{
-            cout << "To em uma folha!!" << endl;
-            print_byte_as_bits(byte);
+            // cout << "To em uma folha!!" << endl;
+            // print_byte_as_bits(byte);
             out.write((char *)&raiz->elem, sizeof(raiz->elem));
             raiz = huffman + tamanhoHuffman - 1;
             count++;
