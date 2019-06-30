@@ -6,13 +6,11 @@
 
 using namespace std;
 
-// São 2 fluxos 
-
 // Compactar
 
 void CompactarLeitura(string nomeArquivo, unsigned long long int frequencia[256], int &numeroElementos, int &totalCaracteresOriginal){
     // Abrir arquivo
-    ifstream in("inputs/" + nomeArquivo, ios::binary);
+    ifstream in(nomeArquivo, ios::binary);
     // Identificador do byte
     unsigned char byte;
     // Inicializando variáveis recebidas
@@ -43,15 +41,8 @@ void BFS(string code[256], string &aux, Huffman *huffman, int i){
 
 void codificador(string code[256], Huffman *huffman, int numeroElementos){
     string aux;
-
     BFS(code, aux, huffman, 2 * numeroElementos - 2);
-
-    for (int i = 0; i < 256; i++)
-        if(!code[i].empty())
-            cout << "Byte: " << (unsigned char)i << " Code: " << code[i] << endl;
 }
-
-
 
 void CompactarEscrita(string nomeArquivoOriginal, string nomeArquivoCompactado){
     // Vetor de frequências por bytes
@@ -75,11 +66,10 @@ void CompactarEscrita(string nomeArquivoOriginal, string nomeArquivoCompactado){
 
     // Utilizar algoritmo de Huffman para construir a Árvore desejada
     algoritmoHuffman(huffman, heap, numeroElementos);
-    imprimirArvoreHuffman(huffman, tamanhoHuffman);
 
     // Criar arquivo
-    ifstream in("inputs/" + nomeArquivoOriginal, ios::binary);
-    ofstream out("hufs/" + nomeArquivoCompactado, ios::binary);
+    ifstream in(nomeArquivoOriginal, ios::binary);
+    ofstream out(nomeArquivoCompactado, ios::binary);
 
     // Tamanho da árvore em inteiro
     out.write((char*)&tamanhoHuffman, sizeof(tamanhoHuffman));
@@ -117,7 +107,6 @@ void CompactarEscrita(string nomeArquivoOriginal, string nomeArquivoCompactado){
     out.close();
 }
 
-
 // Descompactar
 
 bool getBit(unsigned char byte, int posicao){
@@ -125,8 +114,8 @@ bool getBit(unsigned char byte, int posicao){
 }
 
 void Descompactar(string nomeArquivoCompactado, string nomeArquivoOriginal){
-    ifstream in("hufs/" + nomeArquivoCompactado, ios::binary);
-    ofstream out("outputs/" + nomeArquivoOriginal, ios::binary);
+    ifstream in(nomeArquivoCompactado, ios::binary);
+    ofstream out(nomeArquivoOriginal, ios::binary);
 
     int tamanhoHuffman, totalCaracteresOriginal;
 

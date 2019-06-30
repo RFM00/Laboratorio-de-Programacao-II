@@ -12,8 +12,8 @@ int main(int argc, char **argv) {
     if(argc != 4)
     {
         cout << "\nForma de uso : " << endl;
-        cout << "\\.trabalho_3 --compactar arquivo.txt arquivo.huff " << endl;
-        cout << "\\.trabalho_3 --descompactar arquivo.huf arquivo.txt ";
+        cout << "./trabalho_3 --compactar arquivo.txt arquivo.huff " << endl;
+        cout << "./trabalho_3 --descompactar arquivo.huf arquivo.txt ";
         exit(1);
     } 
     clock_t t0;
@@ -34,4 +34,4 @@ int main(int argc, char **argv) {
     }
 }
 
-//g++ -Wall -Wextra -std=c++17 -pedantic -o trabalho_3 trabalho_3.cpp
+//g++ -Wall -Wextra -std=c++17 -pedantic -o huffman main.cpp

@@ -13,37 +13,29 @@ struct Huffman{
     short int esq = -1;
 };
 
-void criarArvore(Huffman *noh, unsigned long long int *frequencia){
+void criarArvore(Huffman *huffman, unsigned long long int *frequencia){
     int j = 0;
     for (int i = 0; i < 256; i++){
         // Apenas elementos que ocorrem
         if (frequencia[i] != 0){
-            noh[j].elem = i;
-            noh[j].freq = frequencia[i];
+            huffman[j].elem = i;
+            huffman[j].freq = frequencia[i];
             j++;
         }
     }
 }
 
-void criarHeap(Heap *A, Huffman *H, int numeroElementos){
+void criarHeap(Heap *heap, Huffman *huffman, int numeroElementos){
     for (int i = 0; i < numeroElementos; i++){
-        A[i].freq = H[i].freq;
-        A[i].indice = i;
+        heap[i].freq = huffman[i].freq;
+        heap[i].indice = i;
     }
-    buildMinHeap(A, numeroElementos);
+    buildMinHeap(heap, numeroElementos);
 }
 
-// Remove os 2 minimos do heap
-// Insere na arvore com freq = soma das freqs dos nos que entraram
-// e filho esquerdo e direito referentes a quem foi removido,
-// Cria um novo no para inserir no heap, onde a freq é a soma, 
-// e o indice é o indice que foi inserido na arvore de huffman
-
 Heap algoritmoHuffman(Huffman *huffman, Heap *heap, int numeroElementos){
-    int peso = 0;
     Heap min[2];
-    int indiceHuffmanAtual = numeroElementos - 1;
-    // imprimirHeap(heap, numeroElementos);
+    int peso = 0, indiceHuffmanAtual = numeroElementos - 1;
     while (numeroElementos > 1){
         // Remove os 2 nohs minimos;
         min[0] = removerMin(heap, numeroElementos);
@@ -61,7 +53,6 @@ Heap algoritmoHuffman(Huffman *huffman, Heap *heap, int numeroElementos){
         huffman[indiceHuffmanAtual].esq = min[1].indice;
         numeroElementos++;
         buildMinHeap(heap, numeroElementos);
-        // imprimirHeap(heap, numeroElementos);
     }
 
     return heap[0];

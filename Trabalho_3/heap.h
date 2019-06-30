@@ -15,52 +15,52 @@ void swap(Heap &a, Heap &b){
     b = aux;
 }
 
-void maxHeapify(Heap *A, int i, int tamanho){
+void maxHeapify(Heap *heap, int i, int tamanho){
     int l = 2 * i + 1;
     int r = 2 * i + 2;
     int max = i;
 
-    if (l < tamanho && A[l].freq > A[i].freq)
+    if (l < tamanho && heap[l].freq > heap[i].freq)
         max = l;
-    if (r < tamanho && A[r].freq > A[max].freq)
+    if (r < tamanho && heap[r].freq > heap[max].freq)
         max = r;
     if (max != i){
-        swap(A[i], A[max]);
-        maxHeapify(A, max, tamanho);
+        swap(heap[i], heap[max]);
+        maxHeapify(heap, max, tamanho);
     }
 }
 
-void minHeapify(Heap *A, int i, int tamanho){
+void minHeapify(Heap *heap, int i, int tamanho){
     int l = 2 * i + 1;
     int r = 2 * i + 2;
     int min = i;
 
-    if (l < tamanho && A[l].freq <= A[i].freq)
+    if (l < tamanho && heap[l].freq <= heap[i].freq)
         min = l;
-    if (r < tamanho && A[r].freq <= A[min].freq)
+    if (r < tamanho && heap[r].freq <= heap[min].freq)
         min = r;
     if (min != i){
-        swap(A[i], A[min]);
-        maxHeapify(A, min, tamanho);
+        swap(heap[i], heap[min]);
+        maxHeapify(heap, min, tamanho);
     }
 }
 
-void buildMinHeap(Heap *A, int tamanho){
+void buildMinHeap(Heap *heap, int tamanho){
     for(int i = tamanho / 2; i >= 0; i--)
-        minHeapify(A, i, tamanho);
+        minHeapify(heap, i, tamanho);
 }
 
-Heap removerMin(Heap *A, int &tamanho){
-    swap(A[0], A[tamanho - 1]);
+Heap removerMin(Heap *heap, int &tamanho){
+    swap(heap[0], heap[tamanho - 1]);
     tamanho--;
-    buildMinHeap(A, tamanho);
-    return A[tamanho];
+    buildMinHeap(heap, tamanho);
+    return heap[tamanho];
 }
 
-void imprimirHeap(Heap *A, int tamanho){
+void imprimirHeap(Heap *heap, int tamanho){
     cout << '\n';
     for (int i = 0; i < tamanho; i++){
-        cout << "Heap " << i <<" : " << A[i].freq << " | " << A[i].indice << endl;
+        cout << "Heap " << i <<" : " << heap[i].freq << " | " << heap[i].indice << endl;
     }
 }
 
