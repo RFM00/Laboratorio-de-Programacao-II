@@ -6,13 +6,22 @@ using namespace std;
 struct Huffman{
     unsigned char elem;
     unsigned long long int freq;
-    short int dir = -1;
-    short int esq = -1;
+    // short int dir = -1;
+    // short int esq = -1;
 };
 
+void print_byte_as_bits(char val) {
+  for (int i = 7; 0 <= i; i--) {
+    printf("%c", (val & (1 << i)) ? '1' : '0');
+  }
+  cout << endl;
+}
 
 
-
+bool getBit(unsigned char byte, int position) // position in range 0-7
+{
+    return (byte >> position) & 0x1;
+}
 
 int main(){
     // ofstream out("bytes.txt", ios::binary);

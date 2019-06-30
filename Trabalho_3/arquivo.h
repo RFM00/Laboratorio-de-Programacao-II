@@ -10,14 +10,14 @@ using namespace std;
 
 // Compactar
 
-void CompactarLeitura(string nomeArquivo, unsigned long long int frequencia[256], int &numeroElementos, int &totalOriginalBits){
+void CompactarLeitura(string nomeArquivo, unsigned long long int frequencia[256], int &numeroElementos, int &totalOriginalCaracteres){
     // Abrir arquivo
     ifstream in("inputs/" + nomeArquivo, ios::binary);
     // Identificador do byte
     unsigned char byte;
     // Inicializando variáveis recebidas
     for (int i = 0; i < 256; i++) frequencia[i] = 0;
-    numeroElementos = 0, totalOriginalBits = 0;
+    numeroElementos = 0, totalOriginalCaracteres = 0;
     // Leitor de arquivo
     while(!in.eof()){ // Enquanto nao for o fim do arquivo
         byte = in.get();
@@ -25,7 +25,7 @@ void CompactarLeitura(string nomeArquivo, unsigned long long int frequencia[256]
         if(frequencia[byte] == 0)
             numeroElementos++;
         ++frequencia[byte];
-        ++totalOriginalBits; // Contador do total bits
+        ++totalOriginalCaracteres; // Contador do total bits
     }
     // Fim do arquivo.
     in.close();
@@ -61,16 +61,23 @@ void codificador(string code[256], Huffman *huffman, int numeroElementos){
             cout << "Byte: " << (unsigned char)i << " Code: " << code[i] << endl;
 }
 
+void print_byte_as_bits(char val) {
+  for (int i = 7; 0 <= i; i--) {
+    printf("%c", (val & (1 << i)) ? '1' : '0');
+  }
+  cout << endl;
+}
+
 void CompactarEscrita(string nomeArquivoOriginal, string nomeArquivoCompactado){
     // Vetor de frequências por bytes
     unsigned long long int frequencia[256];
     // Variáveis com tamanhos correspondentes as estruturas utilizadas
-    int numeroElementos, tamanhoHuffman, totalOriginalBits;
+    int numeroElementos, tamanhoHuffman, totalOriginalCaracteres;
     cout << "Iniciando compactacao..." << endl;
     // Ler arquivo a ser compactado
     // Preencherá as variáveis enviadas como parâmetros com respectivos valores
     cout << "Lendo arquivo..." << endl;
-    CompactarLeitura(nomeArquivoOriginal, frequencia, numeroElementos, totalOriginalBits);
+    CompactarLeitura(nomeArquivoOriginal, frequencia, numeroElementos, totalOriginalCaracteres);
     cout << "Arquivo lido com sucesso!" << endl;
     
     // Criar Árvore de Huffman com tamanho adequado
@@ -101,7 +108,7 @@ void CompactarEscrita(string nomeArquivoOriginal, string nomeArquivoCompactado){
     // Árvore de Huffman
     out.write((char*)huffman, tamanhoHuffman * sizeof(Huffman));
     // Total original de Bits
-    out.write((char*)&totalOriginalBits, sizeof(totalOriginalBits));
+    out.write((char*)&totalOriginalCaracteres, sizeof(totalOriginalCaracteres));
 
     // Codificador, BFS 
     string code[256];
@@ -111,16 +118,66 @@ void CompactarEscrita(string nomeArquivoOriginal, string nomeArquivoCompactado){
     cout << "Arquivo codificado!" << endl;
     // Arquivo codificado
     // cout << "Codificacao" << endl;
-    unsigned char bit;
+    // unsigned char bit;
+    // while(!in.eof()){
+    //     bit = in.get();
+    //     for (unsigned int i = 0; i < code[bit].size(); i++){
+    //         // Bit a Bit
+    //         out.write((char *)&code[bit][i], sizeof(code[bit][i]));
+    //         // cout << (unsigned char)code[bit][i];
+    //     }
+    // }
+    // cout << endl;
+
+    // unsigned char b, buffer = 0;
+    // unsigned count = 0;
+    // while(!in.eof()){
+    //     b = in.get();
+    //     for (unsigned int i = 0; i < code[b].size(); i++){
+    //         cout << "elemento: " << code[b][i] << " ";
+    //         // code[b][i] == '1' ? buffer |= (1 << count) : buffer |= (0 << count);
+    //         buffer &= ~(1 << count);
+    //         buffer |= (code[b][i] << count);
+    //         // buffer |= (code[b][i] << i);
+    //         // buffer <<= code[b][i]; // Make room for next bit.        
+    //         cout << endl;
+    //         print_byte_as_bits(buffer);
+    //         cout << endl;
+    //         if (b) buffer |= 1; // Set if necessary.
+    //         count++; // Remember we have added a bit.
+    //         if (count == 8) {
+    //             out.write((char *)&buffer, sizeof(buffer)); // Error handling elided.
+    //             buffer = 0;
+    //             count = 0;
+    //         }
+    //     }
+    // }
+
+
+    unsigned char b, buffer = 0;
+    unsigned count = 0;
     while(!in.eof()){
-        bit = in.get();
-        for (unsigned int i = 0; i < code[bit].size(); i++){
-            // Bit a Bit
-            out.write((char *)&code[bit][i], sizeof(code[bit][i]));
-            // cout << (unsigned char)code[bit][i];
+        b = in.get();
+        // print_byte_as_bits(buffer);
+        for (unsigned int i = 0; i < code[b].size(); i++){
+            buffer <<= 1; // Make room for next bit.
+            if (code[b][i] == '1') buffer |= 1; // Set 1 if necessary.
+            count++; // Remember we have added a bit.
+            if (count == 8) {
+                print_byte_as_bits(buffer);
+                out.write((char*)&buffer, sizeof(buffer)); // writing code
+                buffer = 0;
+                count = 0;
+            }
         }
     }
-    // cout << endl;
+    if (count != 0) {
+        buffer <<= (8 - count);
+        print_byte_as_bits(buffer);
+        out.write((char*)&buffer, sizeof(buffer));
+    }
+
+
     cout << "Arquivo compactado!" << endl;
 
     in.close();
@@ -130,7 +187,7 @@ void CompactarEscrita(string nomeArquivoOriginal, string nomeArquivoCompactado){
     cout << "Tamanho da Arvore de Huffman: " << tamanhoHuffman << endl;
     cout << "Arvore de Huffman" << endl;
     // imprimirArvoreHuffman(huffman, tamanhoHuffman);
-    cout << "Numero de Bits Original: " << totalOriginalBits << endl;
+    cout << "Numero de total de caracteres original: " << totalOriginalCaracteres << endl;
     // cout << "Codificao do arquivo: " << endl;
     
     // cout << endl;
@@ -139,65 +196,89 @@ void CompactarEscrita(string nomeArquivoOriginal, string nomeArquivoCompactado){
 
 // Descompactar
 
+bool getBit(unsigned char byte, int position) // position in range 0-7
+{
+    return (byte >> position) & 0x1;
+}
+
 void Descompactar(string nomeArquivoCompactado, string nomeArquivoOriginal){
     cout << "Iniciando Descompactacao..." << endl;
     ifstream in("hufs/" + nomeArquivoCompactado, ios::binary);
     ofstream out("outputs/" + nomeArquivoOriginal, ios::binary);
-    int bitsTotal = 0;
-    int tamanhoHuffman, totalOriginalBits;
+    int bytesTotal = 0;
+    int tamanhoHuffman, totalOriginalCaracteres;
     // Ler a primeira informação do arquivo, que é o tamanho da arvore
     in.read((char*)&tamanhoHuffman, sizeof(tamanhoHuffman));
-    bitsTotal += sizeof(tamanhoHuffman);
+    bytesTotal += sizeof(tamanhoHuffman);
 
     // Criar a árvore do tamanho da árvore referente
     Huffman *huffman = new Huffman[tamanhoHuffman];
     // Ler para arvore
     // Lendo a arvore errado.
     in.read((char*)huffman, tamanhoHuffman * sizeof(Huffman));
-    bitsTotal += tamanhoHuffman * sizeof(Huffman);
+    bytesTotal += tamanhoHuffman * sizeof(Huffman);
     cout << "Tamanho da Arvore de Huffman Recuperado: " << tamanhoHuffman << endl;
 
     cout << "Arvore Recuperada..." << endl;
     // imprimirArvoreHuffman(huffman, tamanhoHuffman);
     cout << endl;
     // Ler total Original de Bits
-    in.read((char *)&totalOriginalBits, sizeof(totalOriginalBits));
-    bitsTotal += sizeof(totalOriginalBits);
-    cout << "Numero de Bits Original Recuperado: " << totalOriginalBits << endl;
+    in.read((char *)&totalOriginalCaracteres, sizeof(totalOriginalCaracteres));
+    bytesTotal += sizeof(totalOriginalCaracteres);
+    cout << "Numero de Caracteres Original Recuperado: " << totalOriginalCaracteres << endl;
 
     // Ler parte compactada
     Huffman *raiz = huffman + tamanhoHuffman - 1;
-    unsigned char bit;
+    unsigned char byte;
     int count = 0;
+    int posicao = 0;
     // cout << "Codificacao Recuperada: " << endl;
-    bit = in.get();
-    bitsTotal++;
-    while(count < totalOriginalBits - 1){ // && count < totalOriginalBits
-        bitsTotal++;
+    byte = in.get();
+    print_byte_as_bits(byte);
+    // bytesTotal++;
+    while(count < totalOriginalCaracteres - 1){ // && count < totalOriginalCaracteres
+        // bytesTotal++;
         // if(raiz->elem == '\0'){
         if(!(raiz->dir == -1 && raiz->esq == -1)){
-            if(bit == (unsigned char)'0'){
+            // if(byte == (unsigned char)'0'){
+            cout << "Bit: " << getBit(byte, 7 - posicao) << " na Posicao: " << posicao << endl;
+            if(!getBit(byte, 7 - posicao)){
                 raiz = huffman + raiz->esq;
-                // cout << "Foi para esquerda" << endl;
+                cout << "Foi para esquerda" << endl;
             }
             else{
                 raiz = huffman + raiz->dir;
-                // cout << "Foi para direita" << endl;
+                cout << "Foi para direita" << endl;
             }
+            // count++;
+            // posicao % 8 == 0 ? posicao = 0 : posicao++;
+            
+            if (posicao + 1 % 8 == 0){
+                byte = in.get();     
+                posicao = 0;
+                print_byte_as_bits(byte);
+            }
+            else
+                posicao++;
+
         }else{
+            cout << "To em uma folha!!" << endl;
+            print_byte_as_bits(byte);
             out.write((char *)&raiz->elem, sizeof(raiz->elem));
             raiz = huffman + tamanhoHuffman - 1;
-            // cout << (char)raiz->elem;
             count++;
-            continue;
+            // cout << (char)raiz->elem;
+            // count++;
+            // continue;
         }
-        bit = in.get();
+        // byte = in.get();
         // cout << "Bit: "<< (unsigned char)bit << endl;
     }
+    
     in.close();
     out.close();
 
-    cout << "Arquivo compactado tem no total " << bitsTotal << " bits" << endl;
+    cout << "Arquivo compactado tem no total " << bytesTotal << " bits" << endl;
 }
 
 
