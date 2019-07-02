@@ -15,21 +15,6 @@ void swap(Heap &a, Heap &b){
     b = aux;
 }
 
-void maxHeapify(Heap *heap, int i, int tamanho){
-    int l = 2 * i + 1;
-    int r = 2 * i + 2;
-    int max = i;
-
-    if (l < tamanho && heap[l].freq > heap[i].freq)
-        max = l;
-    if (r < tamanho && heap[r].freq > heap[max].freq)
-        max = r;
-    if (max != i){
-        swap(heap[i], heap[max]);
-        maxHeapify(heap, max, tamanho);
-    }
-}
-
 void minHeapify(Heap *heap, int i, int tamanho){
     int l = 2 * i + 1;
     int r = 2 * i + 2;
@@ -41,7 +26,7 @@ void minHeapify(Heap *heap, int i, int tamanho){
         min = r;
     if (min != i){
         swap(heap[i], heap[min]);
-        maxHeapify(heap, min, tamanho);
+        minHeapify(heap, min, tamanho);
     }
 }
 
