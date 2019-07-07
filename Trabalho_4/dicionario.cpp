@@ -12,9 +12,7 @@ private:
     {
         TC chave;
         TV valor;
-        Noh *pai = nullptr;
-        Noh *esq = nullptr;
-        Noh *dir = nullptr;
+        Noh *pai, *esq, *dir;
     };
 
     Noh *raiz;
